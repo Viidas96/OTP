@@ -1,0 +1,24 @@
+{
+  "name": "otp",
+  "version": "1.0.0",
+  "description": "OTP service for OCEAN team in phase 3 of the mini project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Viidas96/OTP.git"
+  },
+  "keywords": [
+    "OTP",
+    "phase3",
+    "OCEAN"
+  ],
+  "author": "Group 16 OTP",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Viidas96/OTP/issues"
+  },
+  "homepage": "https://github.com/Viidas96/OTP#readme"
+}
