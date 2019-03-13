@@ -64,9 +64,17 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
 
 }
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 //generate otp pin, 5 digit long
 function generateOtp() {
-  return Math.floor(Math.random() * 100000);
+  let number = '';
+  for(let i = 0; i < 5; i++){
+    number += getRandomInt(10);
+  }
+  return number;
 }
 
 /*
@@ -77,34 +85,7 @@ function getLogs(startDay, endDay){
 
 }
 
-
-/* 
-  TODO
-  See if this can still be used else remove it
-*/
-
-//The Token class
-class OTPToken {
-  //constructor for token
-  constructor(seconds = 60) {
-    this.resetToken(seconds)
-  }
-
-  //set the valid time (the time the token is valid for)
-  resetToken(seconds = 60) {
-    this.currentTime = new Date();
-    this.expireTime = new Date(this.currentTime.getTime() + seconds * 1000);
-  }
-
-  //returns whether the token has expired
-  hasExpired() {
-    var now = new Date();
-    return (this.expireTime < now);
-  }
-}
-
 module.exports = {
-  flatFileString,
   generateOtp,
   OTPToken,
   insertFlatFile,

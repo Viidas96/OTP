@@ -64,7 +64,6 @@ app.post("/validate", async (req, res) => {
   //insert a log of this validation to the flatfile
   main.insertFlatFile(clientID, clients[clientID].otp, new Date().toISOString(), response.status);
 
-  //test if filter works as expected
   //remove the object from the array
   delete clients[clientID];
 
@@ -85,7 +84,6 @@ app.post("/getlogs", async (req, res) => {
 
 //running the server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
 
 //testing thing
 main.insertFlatFile('1', '55500', '', true);
