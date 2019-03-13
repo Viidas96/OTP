@@ -46,12 +46,25 @@ app.post("/genotp", async(req,res) => {
 
 app.post("/validate", async(req,res) => {
   //get clientID and pin then validate
+  const checkTime = new Date();
+  const clientID = req.body.clientID;
+  const testOTP = req.body.otp;
+
+  let createdTime = new Date(clients[clientID].createdTime);
+
+  if(testOTP == clients[clientID].otp){
+    res.json(((checkTime.getTime() - createdTime.getTime()) > 60) ? {status: false} : {status: false});
+  }
+  else{
+    res.json({status: false});
+  }
+  
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/getlogs", async(req,res) => {
-
+  res.json({"clientID": "c1234", });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
