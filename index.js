@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 
-const main = require('./main.js')
+const main = require('./main.js');
+const port = 5001;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //DO NOT TOUCH THIS IS FOR LATER IN PHAZE 3
@@ -65,3 +66,4 @@ async function test(seconds) {
 test(6)
 
 //end of OTPToken Test
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));

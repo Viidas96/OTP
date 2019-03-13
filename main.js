@@ -7,10 +7,10 @@ const app = express();
 ///////////////////////////////////////////////////////////////////////////////////////
 //NB this needs to be changed to be json on request of the reporting group
 const flatFileString = (clientID, otp, successfull) => {
-  switch (successfull){
-    case true: `${clientID} login request, ${otp} granted, login successful`;
-    case false: `${clientID} login request, ${otp} granted, login unsuccessful`;
-  }
+  `{'clientID': '${clientID}',
+    'otp': '${otp}',
+    'status': '${successfull}'
+    }`;
 }
 
 //generate otp pin, 5 digit long
