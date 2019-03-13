@@ -46,7 +46,6 @@ app.post("/genotp", async (req, res) => {
 
 app.post("/validate", async (req, res) => {
   //get clientID and pin then validate
-  const checkTime = new Date();
   const clientID = req.body.clientID;
   const testOTP = req.body.otp;
 
@@ -55,7 +54,7 @@ app.post("/validate", async (req, res) => {
   let response = null;
   if (testOTP == clients[clientID].otp) {
     //60000 because it returns miliseconds not seconds
-    response = { status : ((checkTime.getTime() - createdTime.getTime()) < 60000)};
+    response = { status : main.validateTime(createdTime)};
   }
   else {
     response = { status: false };

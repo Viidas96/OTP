@@ -64,6 +64,10 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
 
 }
 
+function validateTime(createdTime, checkTime = new Date()){
+  return ((checkTime.getTime() - createdTime.getTime()) < 60000)
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -87,7 +91,7 @@ function getLogs(startDay, endDay){
 
 module.exports = {
   generateOtp,
-  OTPToken,
   insertFlatFile,
-  getLogs
+  getLogs,
+  validateTime
 };
