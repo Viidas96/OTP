@@ -13,7 +13,7 @@ app.use(bodyParser.json);
 const notificationUrl = "";
 
 //our endpoint and it expects a json object {'clientID':'someID'}
-app.post("/genotp", async(req,res) => {
+app.post("/genotp", async (req, res) => {
   //generate a 5 digit OTP
   const clientID = req.body.clientID;
   clients[clientID].otp = main.generateOtp();
@@ -22,20 +22,20 @@ app.post("/genotp", async(req,res) => {
   //send a post request to Notification containing the clientID and the OTP we generated
   let notified = null;
 
-  try{
+  try {
     const notifiedRes = await fetch(notificationUrl, {
       method: 'POST',
       body: JSON.stringify({
         clientID: req.body.clientID,
         otp: OTP
       }),
-      headers: {'Content-Type': 'application/json'}
+      headers: { 'Content-Type': 'application/json' }
     });
-  
+
     notified = await notifiedRes.json();
   }
-  catch(err){
-    notified = {"status": false};
+  catch (err) {
+    notified = { "status": false };
     //for testing we will do other things in here 
   }
 
@@ -44,7 +44,7 @@ app.post("/genotp", async(req,res) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post("/validate", async(req,res) => {
+app.post("/validate", async (req, res) => {
   //get clientID and pin then validate
   const checkTime = new Date();
   const clientID = req.body.clientID;
@@ -52,19 +52,34 @@ app.post("/validate", async(req,res) => {
 
   let createdTime = new Date(clients[clientID].createdTime);
 
-  if(testOTP == clients[clientID].otp){
-    res.json(((checkTime.getTime() - createdTime.getTime()) > 60) ? {status: false} : {status: false});
+  let response = null;
+  if (testOTP == clients[clientID].otp) {
+    response = ((checkTime.getTime() - createdTime.getTime()) > 60) ? { status: false } : { status: false };
   }
-  else{
-    res.json({status: false});
+  else {
+    response = { status: false };
   }
-  
+
+  //insert a log of this validation to the flatfile
+  main.insertFlatFile(clientID, clients[clientID].otp, new Date().toISOString(), response.status);
+
+  //test if filter works as expected
+  //remove the object from the array
+  clients = clients.filter(function (value, index, arr) {
+    return (value.clientID == clientID) && (value.createdTime == createdTime);
+  });
+
+  res.json(response);
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post("/getlogs", async(req,res) => {
-  res.json({"clientID": "c1234", });
+app.post("/getlogs", async (req, res) => {
+  //test data because function not implemented fully
+
+  let result = main.getLogs();
+
+  res.json({ "id": 1, "clientID": "c1234", 'OTP': '12345', 'timeStamp': '2019-03-13T19:07:30.695Z', 'success': true }, { "id": 2, "clientID": "c1235", 'OTP': '98765', 'timeStamp': '2019-03-13T19:09:30.695Z', 'success': false });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,4 +89,4 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 
 //testing thing
-main.insertFlatFile('1','55500' , '',true);
+main.insertFlatFile('1', '55500', '', true);
