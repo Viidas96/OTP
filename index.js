@@ -54,7 +54,8 @@ app.post("/validate", async (req, res) => {
 
   let response = null;
   if (testOTP == clients[clientID].otp) {
-    response = ((checkTime.getTime() - createdTime.getTime()) > 60) ? { status: false } : { status: false };
+    //60000 because it returns miliseconds not seconds
+    response = { status : ((checkTime.getTime() - createdTime.getTime()) < 60000)};
   }
   else {
     response = { status: false };
@@ -65,9 +66,7 @@ app.post("/validate", async (req, res) => {
 
   //test if filter works as expected
   //remove the object from the array
-  clients = clients.filter(function (value, index, arr) {
-    return (value.clientID == clientID) && (value.createdTime == createdTime);
-  });
+  delete clients[clientID];
 
   res.json(response);
 });
