@@ -19,11 +19,13 @@ app.post("/otp", async (req, res) => {
   let timer = new main.OTPToken();
 
   //send a post request to Notification containing the clientID and the OTP we generated
-  const notified = await fetch(notificationUrl, {
+  /*const notified = await fetch(notificationUrl, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {'Content-Type': 'application/json'}
-  })
+  })*/
+  
+  alert(OTP);
 
   //a post to the ATM interface, userEnter will be the OTP the user entered in json form
   const userEnter = await fetch(frontEndUrl, {
