@@ -4,6 +4,8 @@ const OTPToken = require('./OTPToken')
 const app = express();
 
 //const for flatfile storage
+///////////////////////////////////////////////////////////////////////////////////////
+//NB this needs to be changed to be json on request of the reporting group
 const flatFileString = (clientID, otp, successfull) => {
   switch (successfull){
     case true: `${clientID} login request, ${otp} granted, login successful`;

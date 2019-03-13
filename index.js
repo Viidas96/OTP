@@ -5,58 +5,42 @@ const main = require('./main.js')
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //DO NOT TOUCH THIS IS FOR LATER IN PHAZE 3
-/*
+
+//The URL endpoints that we wil use to make POST requests
 const frontEndUrl = "";
 const notificationUrl = "";
 
-
+//our endpoint and it expects a json object {'clientID':'someID'}
 app.post("/otp", async (req, res) => {
-  // handle req.body to get clientID
+  //generate a 5 digit OTP
   let OTP = main.generateOtp();
+  //timer with default 60 seconds
+  let timer = new main.OTPToken();
 
-  //body will be clientID and OTP in json form
-  fetch(notificationUrl, {
+  //send a post request to Notification containing the clientID and the OTP we generated
+  const notified = await fetch(notificationUrl, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {'Content-Type': 'application/json'}
+  })
+
+  //a post to the ATM interface, userEnter will be the OTP the user entered in json form
+  const userEnter = await fetch(frontEndUrl, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {'Content-Type': 'application/json'}
   });
-  //need to do a get request to user interface (so the user can input)
-  const data = await fetch(frontEndUrl);
-  //convert to json to access user OTP
-  const dataAsJson = await data.json();
 
-  //check if user entered same otp
-  //set valid to result
+  //compare OTP with userEnter, and check that timer.hasExpired is false then set valid to true and return the body to Authenticatrion
 
   res.json({valid});
 });
-*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-=======
-const fs = require('fs');
 
-const OTPToken = require('./OTPToken')
-const app = express();
-
-//const for flatfile storage
-const flatFileString = (clientID, otp, successfull) => {
-  switch (successfull){
-    case true: `${clientID} login request, ${otp} granted, login successful`;
-    case false: `${clientID} login request, ${otp} granted, login unsuccessful`;
-  }
-}
-
-//generate otp pin, 5 digit long
-function generateOtp() 
-{
-  return Math.floor(Math.random() * 100000);
-}
-
-//functions below is purely to use OTPToken it is a testing function and will be removed at a later stage
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-  
+/*
+  TODO
+  we need a get request that will respond with the 
+*/
 
 //test "main" to demonstrate the working functionallity of the OTP 
 async function test(seconds) {
