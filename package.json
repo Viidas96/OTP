@@ -4,7 +4,8 @@
   "description": "OTP service for OCEAN team in phase 3 of the mini project",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/Viidas96/OTP#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "node-fetch": "^2.3.0"
   }
 }
