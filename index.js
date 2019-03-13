@@ -12,7 +12,7 @@ const frontEndUrl = "";
 const notificationUrl = "";
 
 //our endpoint and it expects a json object {'clientID':'someID'}
-app.post("/otp", async (req, res) => {
+app.post("/otp", async(req,res) => {
   //generate a 5 digit OTP
   let OTP = main.generateOtp();
   //timer with default 60 seconds
@@ -45,27 +45,7 @@ app.post("/otp", async (req, res) => {
   we need a get request that will respond with the 
 */
 
-//test "main" to demonstrate the working functionallity of the OTP 
-async function test(seconds) {
-  console.log('Creating token with 5 seconds expire time.');
-  let t = new OTPToken(5);
-  console.log('Token Created.');
-  console.log('Sleeping for ' + seconds + ' seconds');
-  await sleep(seconds * 1000);
-  console.log('Awaken');
-  console.log('Has your token expired?');
-  
-  if (t.hasExpired()) {
-    console.log('Yes');
-  } 
-  else { 
-    console.log('No');  
-  }
-}
-
-
-//main function calls
-test(6)
-
 //end of OTPToken Test
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+main.insertFlatFile('1','55500' , '',true);
