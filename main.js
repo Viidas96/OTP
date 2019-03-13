@@ -1,8 +1,5 @@
 const fs = require('fs');
 
-const OTPToken = require('./OTPToken')
-const app = express();
-
 //const for flatfile storage
 ///////////////////////////////////////////////////////////////////////////////////////
 //NB this needs to be changed to be json on request of the reporting group

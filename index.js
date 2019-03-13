@@ -12,9 +12,12 @@ const frontEndUrl = "";
 const notificationUrl = "";
 
 //our endpoint and it expects a json object {'clientID':'someID'}
+//1. Require OTP so call this function from AUTH sub system
 app.post("/otp", async (req, res) => {
   //generate a 5 digit OTP
   let OTP = main.generateOtp();
+  console.log("Generated OTP:" + OTP);
+
   //timer with default 60 seconds
   let timer = new main.OTPToken();
 
@@ -25,18 +28,16 @@ app.post("/otp", async (req, res) => {
     headers: {'Content-Type': 'application/json'}
   })*/
   
-  alert(OTP);
-
   //a post to the ATM interface, userEnter will be the OTP the user entered in json form
-  const userEnter = await fetch(frontEndUrl, {
+  /*const userEnter = await fetch(frontEndUrl, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {'Content-Type': 'application/json'}
-  });
+  });*/
 
   //compare OTP with userEnter, and check that timer.hasExpired is false then set valid to true and return the body to Authenticatrion
 
-  res.json({valid});
+  res.json(true);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +47,7 @@ app.post("/otp", async (req, res) => {
 */
 
 //test "main" to demonstrate the working functionallity of the OTP 
-async function test(seconds) {
+/*async function test(seconds) {
   console.log('Creating token with 5 seconds expire time.');
   let t = new OTPToken(5);
   console.log('Token Created.');
@@ -61,11 +62,10 @@ async function test(seconds) {
   else { 
     console.log('No');  
   }
-}
-
+}*/
 
 //main function calls
-test(6)
+//test(6)
 
 //end of OTPToken Test
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
