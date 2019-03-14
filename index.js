@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const main = require('./main.js');
 
 const app = express();
-const port = 8080;
+//const port = process.env.PORT || 8080;
 let clients = [];
 app.use(express.json());
 
@@ -69,8 +69,10 @@ const rootStr = `<!DOCTYPE html>
 
 //This is needed
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
   next();
 });
 
@@ -179,7 +181,7 @@ app.post("/getlogs", async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //running the server
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(process.env.PORT || 5001, () => console.log(`Example app listening on port ` + process.env.PORT ));
 //Bryan Testing
 /*let valid = false;
 valid = main.insertFlatFile(1,'555000','2019-03-13T19:07:30.695Z',false);
