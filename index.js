@@ -88,7 +88,7 @@ app.post("/validate", async (req, res) => {
   }
 
   //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toString(), response.status);
+  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
 
   //remove the object from the array
   //delete clients[clientID];

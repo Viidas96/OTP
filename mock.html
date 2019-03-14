@@ -21,7 +21,7 @@
                 }
             }
             //"2019-03-15T19:07:32.695Z"
-            var data = JSON.stringify({ "fromDate": fromDate.toString(),"toDate": toDate.toString() });
+            var data = JSON.stringify({ "fromDate": fromDate.toISOString(),"toDate": toDate.toISOString() });
             xhr.send(data);
         }
 
