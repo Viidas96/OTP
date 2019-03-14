@@ -17,10 +17,11 @@
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var json = JSON.parse(xhr.responseText);
                     console.log(json);
+                    document.getElementById("logs").innerHTML = json;
                 }
             }
             //"2019-03-15T19:07:32.695Z"
-            var data = JSON.stringify({ "fromDate": fromDate.toISOString(), "toDate": toDate.toISOString() });
+            var data = JSON.stringify({ "fromDate": fromDate.toString(),"toDate": toDate.toString() });
             xhr.send(data);
         }
 
@@ -51,6 +52,7 @@
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var json = JSON.parse(xhr.responseText);
                     console.log(json);
+                    document.getElementById('pinValid').innerHTML = "Pin is:" + json.status;
                 }
             }
             var data = JSON.stringify({ "clientID": clientID, "otp": otp });
@@ -71,6 +73,7 @@
             <p id="otp">OTP pin sent to notification subsystem: </p>
             <input id='otpUser' type="text"/>
             <button onclick="validateOTP('1',document.getElementById('otpUser').value)">Validate</button>
+            <p id="pinValid">Pin is:</p>
         <br/>
             <h2>Get Logs for given dates</h2>
             <label>From Date</label>
@@ -78,6 +81,10 @@
             <label>To Date</label>
             <input id="toDate" type="datetime-local" name="toDate">
             <button onclick="getLogs(document.getElementById('fromDate').value,document.getElementById('toDate').value)">Validate</button>
+            <h2>
+                Logs
+            </h2>
+            <p id="logs"></p>
 </body>
 
 </html>
