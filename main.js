@@ -72,8 +72,8 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
 /**
  * It checks the time the pin was created and checks it against the current time
  * and if its less than a minute it returns true  otherwise false.
- * @param {Date} createdTime 
- * @param {Date} checkTime 
+ * @param {String} createdTime 
+ * @param {String} checkTime 
  */
 function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime.getTime() - createdTime.getTime()) < 60000)
