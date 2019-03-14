@@ -79,23 +79,21 @@ function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime.getTime() - createdTime.getTime()) < 60000)
 }
 
-/**
- * Returns a random integer to a max.
- * @param {int} max 
- */
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-/**
- * Returns a 5 digit OTP string.
- */
-function generateOtp() {
-  let number = '';
-  for(let i = 0; i < 5; i++){
-    number += getRandomInt(10);
+//generate otp pin, 5 digit long
+function generateOtp() 
+{
+  
+  var arr = [];
+  for(var i=0; i<5;i++)
+  {
+    arr.push(Math.floor(Math.random()*10)+0);
   }
-  return number;
+  var finalAns = "";
+  for(var i=0; i<5;i++)
+  {
+    finalAns += arr[i];
+  }
+  return finalAns;
 }
 
 /**
