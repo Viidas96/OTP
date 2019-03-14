@@ -1,56 +1,43 @@
 const fs = require('fs');
-const AsyncLock = require('async-lock');
-var lock = new AsyncLock();
 
-//const for flatfile storage
-///////////////////////////////////////////////////////////////////////////////////////
-//NB this needs to be changed to be json on request of the reporting group
-const flatFileString = (clientID, otp, successfull) => {
-  `{'clientID': '${clientID}',
-    'otp': '${otp}',
-    'status': '${successfull}'
-    }`;
-}
-
-//@author Bryan Janse Van Vuuren u16217498
-//This function will create and insert into a flatfile.
-function insertFlatFile(clientID, OTP, timestamp, success) {
+/**
+ * It adds the parameters parameters to a flat file in JSON format.
+ * @param {String} clientID 
+ * @param {String} OTP 
+ * @param {String} timestamp 
+ * @param {Bool} success 
+ */
+//Will happen sync
+ function insertFlatFile(clientID, OTP, timestamp, success) {
   let fileName = 'flatfile.json';
-  lock.acquire('key', function(done) {
     // async work
-  var jsonContent = [];
-  fs.exists(fileName, function (exists) {
-    if (exists) {
-      var contents = fs.readFileSync(fileName);
-      if(contents.length == 0)
-      {
-        //console.log("No data in file");
-      }
-      else
-      {
-        jsonContent = JSON.parse(contents);
-      }
-      
-      let lastIndex = 0;
-      for (var i = 0; i < jsonContent.length; i++) {
-        var obj = jsonContent[i];
-        lastIndex = obj.id;
-      }
-      let insertLog = {
-        id: lastIndex + 1,
-        clientID: clientID,
-        OTP: OTP,
-        timestamp: timestamp,
-        success: success
-      };
-      jsonContent.push(insertLog);
-      fs.writeFile(fileName, JSON.stringify(jsonContent), function (err) {
-        if (err) {
-          throw err;
+    var jsonContent = [];
+    try{
+    if(fs.existsSync(fileName)){
+        var contents = fs.readFileSync(fileName);
+        if (contents.length == 0) {
+          //console.log("No data in file");
         }
-        console.log('Inserted into flatfile');
-      });
-    } else {
+        else {
+          jsonContent = JSON.parse(contents);
+        }
+
+        let lastIndex = 0;
+        for (var i = 0; i < jsonContent.length; i++) {
+          var obj = jsonContent[i];
+          lastIndex = obj.id;
+        }
+        let insertLog = {
+          id: lastIndex + 1,
+          clientID: clientID,
+          OTP: OTP,
+          timestamp: timestamp,
+          success: success
+        };
+        jsonContent.push(insertLog);
+          fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
+    }
+    else {
       let insertLog = {
         id: 0,
         clientID: clientID,
@@ -61,55 +48,89 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
 
       let lines = [];
       lines.push(insertLog);
-      fs.appendFile(fileName, JSON.stringify(lines), function (err) {
-        if (err) {
-          throw err;
-        }
-        console.log('Inserted into flatfile');
-      });
+      fs.appendFileSync(fileName, JSON.stringify(lines));
     }
-  });
-    
-}, function(err, ret) {
-    // lock released
-});
-  
+    return true;
+  }
+  catch(e)
+  {
+    return false;
+  }
+}
+
+/**
+ * It checks the time the pin was created and checks it against the current time
+ * and if its less than a minute it returns true  otherwise false.
+ * @param {String} createdTime 
+ * @param {String} checkTime 
+ */
+function validateTime(createdTime, checkTime = new Date()){
+  return ((checkTime.getTime() - createdTime.getTime()) < 60000)
 }
 
 //generate otp pin, 5 digit long
-function generateOtp() {
-  return Math.floor(Math.random() * 100000);
+function generateOtp() 
+{
+  
+  var arr = [];
+  for(var i=0; i<5;i++)
+  {
+    arr.push(Math.floor(Math.random()*10)+0);
+  }
+  var finalAns = "";
+  for(var i=0; i<5;i++)
+  {
+    finalAns += arr[i];
+  }
+  return finalAns;
 }
 
-//functions below is purely to use OTPToken it is a testing function and will be removed at a later stage
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+/**
+ * It returns logs from the startDay to the endDay.
+ * @param {Date} startDay 
+ * @param {Date} endDay 
+ */
 
-//The Token class
-class OTPToken {
-  //constructor for token
-  constructor(seconds = 60) {
-    this.resetToken(seconds)
-  }
+/*
+  TODO
+  create a function that will return a stringified collection from the flatfile between 2 dates
+*/
+//Will happen sync
+ function getLogs(fromDate, toDate){
+  //Need to read flatfile
+  let fileName = 'flatfile.json';
+  var jsonContent = [];
+  var logsBetweenDates = [];
+  if(fs.existsSync(fileName)) {
+      var contents = fs.readFileSync(fileName);
+      if (contents.length == 0) {
+      }
+      else {
+        jsonContent = JSON.parse(contents);
+      }
 
-  //set the valid time (the time the token is valid for)
-  resetToken(seconds = 60) {
-    this.currentTime = new Date();
-    this.expireTime = new Date(this.currentTime.getTime() + seconds * 1000);
-  }
+      let lastIndex = 0;
+      for (var i = 0; i < jsonContent.length; i++) {
+        var obj = jsonContent[i];
+        var date = new Date(obj.timestamp);
+        
+        if(date >= fromDate && date <= toDate)
+        {
+          logsBetweenDates.push(obj);
+        }
+      }
 
-  //returns whether the token has expired
-  hasExpired() {
-    var now = new Date();
-    return (this.expireTime < now);
-  }
+      return JSON.stringify(logsBetweenDates);
+      
+    } else {
+     //File does not exist
+     return JSON.stringify(logsBetweenDates);
+    }
 }
 
 module.exports = {
-  flatFileString,
   generateOtp,
-  sleep,
-  OTPToken,
-  insertFlatFile
+  insertFlatFile,
+  getLogs,
+  validateTime
 };

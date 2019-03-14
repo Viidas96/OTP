@@ -1,8 +1,27 @@
 ## The Documentation for the OTP service for the OCEAN Team
 ---
-### Description
-Authentication will poll OTP as soon as a client logs in to the application, OTP will then generate a code that is valid for {60} seconds, this code will be sent to Notifications alongside the clientID so a notification can be sent to the client, a prompt will be displayed on the app to tell the user that they should insert their pin. This pin will be sent back to OTP and validated, after it has been validated either true or false will be sent to Authentication.
+## Requirements
+- Node
+- npm
 
-## Endpoints
+## Setup
+### To run
+- npm install --save
+- npm start / node index.js
+### To test
+- npm install --save-dev
+- npm run test  
 ---
-Endpoint 1 is `/otp` and expects a body `{'clientID': 'someID'}`
+## Unit testing 
+- Unit tests are setup using [jest](https://jestjs.io/docs/en/getting-started) and tests are written in main.test.js
+---
+## How it works
+- Authentication team sends the OTP team the client ID.
+- OTP team generates the OPT.
+- The OTP and client ID is passed down to the notification team.
+- The notification team sends the OTP to the client based on the client ID .
+- The ATM Stimulation team captures the pin types in and sends it to the authentication team.
+- Authentication sends the pin to OTP team to check if the pin send before is equal to the pin entered by the client.
+- OTP team  does the validation of the pin and sends the status of it to the Authentication team.
+- OTP team then sends the audit log to the Report team.
+---
