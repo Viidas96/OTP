@@ -3,22 +3,60 @@
 
 <head>
     <script>
-        var params = {
-  "fromDate":new Date(),
-  "toDate": new Date()
-    }
-    xhr = new XMLHttpRequest();
-    var url = "https://cors-anywhere.herokuapp.com/https://localhost:5001/getlogs";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/json");
-    xhr.onreadystatechange = function () { 
-    if (xhr.readyState == 4 && xhr.status == 200) {
-        var json = JSON.parse(xhr.responseText);
-        console.log(json);
-    }
-}
-var data = JSON.stringify({"fromDate":"2019-03-13T19:07:30.695Z","toDate":"2019-03-15T19:07:32.695Z"});
-xhr.send(data);
+
+        //createOTP('1');
+       
+        function getLogs(fromDate, toDate) {
+            fromDate = new Date(fromDate);
+            toDate = new Date(toDate);
+            xhr = new XMLHttpRequest();
+            var url = "http://localhost:5001/getlogs";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                }
+            }
+            //"2019-03-15T19:07:32.695Z"
+            var data = JSON.stringify({ "fromDate": fromDate.toISOString(), "toDate": toDate.toISOString() });
+            xhr.send(data);
+        }
+
+        function createOTP(clientID)
+        {
+            xhr = new XMLHttpRequest();
+            var url = "http://localhost:5001/genotp";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                    document.getElementById('otp').innerText = "OTP pin sent to notification subsystem: " + json.otp;
+                }
+            }
+            var data = JSON.stringify({ "clientID": clientID});
+            xhr.send(data);
+        }
+
+        function validateOTP(clientID,otp)
+        {
+            xhr = new XMLHttpRequest();
+            var url = "http://localhost:5001/validate";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                }
+            }
+            var data = JSON.stringify({ "clientID": clientID, "otp": otp });
+            xhr.send(data);
+        }
+
     </script>
     <title>
         Mock Test
@@ -29,6 +67,17 @@ xhr.send(data);
     <h1>
         Demo Purpose Page
     </h1>
+            <button onclick="createOTP('1')">Generate Pin</button>
+            <p id="otp">OTP pin sent to notification subsystem: </p>
+            <input id='otpUser' type="text"/>
+            <button onclick="validateOTP('1',document.getElementById('otpUser').value)">Validate</button>
+        <br/>
+            <h2>Get Logs for given dates</h2>
+            <label>From Date</label>
+            <input id="fromDate" type="datetime-local" name="fromDate">
+            <label>To Date</label>
+            <input id="toDate" type="datetime-local" name="toDate">
+            <button onclick="getLogs(document.getElementById('fromDate').value,document.getElementById('toDate').value)">Validate</button>
 </body>
 
 </html>

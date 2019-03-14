@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/Viidas96/OTP#readme",
   "dependencies": {
-    "async-lock": "^1.2.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "node-fetch": "^2.3.0"

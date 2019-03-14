@@ -4,9 +4,15 @@ const main = require('./main.js');
 
 const app = express();
 const port = 5001;
-let clients = {};
+let clients = [];
+app.use(express.json());
 
-//app.use(bodyParser.json);
+//This is needed
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
@@ -16,8 +22,17 @@ const notificationUrl = "";
 app.post("/genotp", async (req, res) => {
   //generate a 5 digit OTP
   const clientID = req.body.clientID;
-  clients[clientID].otp = main.generateOtp();
-  clients[clientID].timecreated = new Date().toISOString;
+  const otp = main.generateOtp();
+  //clients[clientID].otp = main.generateOtp();
+  //clients[clientID].timecreated = new Date().toISOString;
+  const dateTime =  new Date();
+  var client = {
+    clientID: clientID,
+    otp:  otp,
+    timestamp:dateTime
+  };
+
+  clients.push(client);
 
   //send a post request to Notification containing the clientID and the OTP we generated
   let notified = null;
@@ -27,7 +42,7 @@ app.post("/genotp", async (req, res) => {
       method: 'POST',
       body: JSON.stringify({
         clientID: req.body.clientID,
-        otp: OTP
+        otp: otp
       }),
       headers: { 'Content-Type': 'application/json' }
     });
@@ -35,8 +50,10 @@ app.post("/genotp", async (req, res) => {
     notified = await notifiedRes.json();
   }
   catch (err) {
-    notified = { "status": false };
+
+    //notified = {"status": false};
     //for testing we will do other things in here 
+    notified = {"status": true,"otp":otp};
   }
 
   res.json(notified);
@@ -48,11 +65,15 @@ app.post("/validate", async (req, res) => {
   //get clientID and pin then validate
   const clientID = req.body.clientID;
   const testOTP = req.body.otp;
-
-  let createdTime = new Date(clients[clientID].createdTime);
-
+  
+  let createdTime = clients.find( client => client.clientID === clientID);
+  if(createdTime != null)
+  {
+    createdTime = createdTime.timestamp;
   let response = null;
-  if (testOTP == clients[clientID].otp) {
+  const clientOTP = clients.find( client => client.clientID === clientID);
+  const clientIndex = clients.findIndex(client => client.clientID === clientID);
+  if (testOTP == clientOTP.otp) {
     //60000 because it returns miliseconds not seconds
     response = { status : main.validateTime(createdTime)};
   }
@@ -61,24 +82,25 @@ app.post("/validate", async (req, res) => {
   }
 
   //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clients[clientID].otp, new Date().toISOString(), response.status);
+  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
 
   //remove the object from the array
-  delete clients[clientID];
-
+  //delete clients[clientID];
+  clients.splice(clientIndex,1);
+  }
+  else
+  {
+    response = { status: false };
+  }
   res.json(response);
 });
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/getlogs", async (req, res) => {
-  console.log("called");
   //test data because function not implemented fully
   const fromDate = new Date(req.body.fromDate);
   const toDate = new Date(req.body.toDate);
   
-  console.log(fromDate);
-  console.log(toDate);
   let result = main.getLogs(fromDate,toDate);
 
   res.json(result);
