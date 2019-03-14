@@ -25,3 +25,6 @@
 - OTP team  does the validation of the pin and sends the status of it to the Authentication team.
 - OTP team then sends the audit log to the Report team.
 ---
+
+[![Waffle.io - Issues in progress](https://badge.waffle.io/Viidas96/OTP.png?label=in%20progress&title=In%20Progress)](http://waffle.io/Viidas96/OTP)
+---
