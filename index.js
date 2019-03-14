@@ -6,7 +6,7 @@ const app = express();
 const port = 5001;
 let clients = {};
 
-app.use(bodyParser.json);
+//app.use(bodyParser.json);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
@@ -61,7 +61,7 @@ app.post("/validate", async (req, res) => {
   }
 
   //insert a log of this validation to the flatfile
-  main.insertFlatFile(clientID, clients[clientID].otp, new Date().toISOString(), response.status);
+  var value = main.insertFlatFile(clientID, clients[clientID].otp, new Date().toISOString(), response.status);
 
   //remove the object from the array
   delete clients[clientID];
@@ -72,17 +72,31 @@ app.post("/validate", async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/getlogs", async (req, res) => {
+  console.log("called");
   //test data because function not implemented fully
+  const fromDate = new Date(req.body.fromDate);
+  const toDate = new Date(req.body.toDate);
+  
+  console.log(fromDate);
+  console.log(toDate);
+  let result = main.getLogs(fromDate,toDate);
 
-  let result = main.getLogs();
-
-  res.json({ "id": 1, "clientID": "c1234", 'OTP': '12345', 'timeStamp': '2019-03-13T19:07:30.695Z', 'success': true }, { "id": 2, "clientID": "c1235", 'OTP': '98765', 'timeStamp': '2019-03-13T19:09:30.695Z', 'success': false });
+  res.json(result);
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //running the server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
-//testing thing
-main.insertFlatFile('1', '55500', '', true);
+//Bryan Testing
+/*let valid = false;
+valid = main.insertFlatFile(1,'555000','2019-03-13T19:07:30.695Z',false);
+console.log(valid);
+valid = main.insertFlatFile(1,'555001','2019-03-14T19:07:35.695Z',false);
+console.log(valid);
+//main.insertFlatFile(1,'555002','2019-03-15T19:07:32.695Z',false);
+//main.insertFlatFile(1,'555003','2019-03-11T19:07:32.695Z',false);
+//main.insertFlatFile(1,'555004','2019-03-13T19:07:32.695Z',false);
+//main.insertFlatFile(1,'555005','2019-03-13T19:07:32.695Z',false);
+let result = main.getLogs(new Date('2019-03-13T19:07:30.695Z'),new Date('2019-03-14T19:07:30.695Z'));
+console.log(result);*/

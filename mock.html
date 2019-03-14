@@ -3,19 +3,22 @@
 
 <head>
     <script>
-        if (window.XMLHttpRequest) {
-            xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "http://localhost:5001/otp", true);
-            xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            xmlhttp.onreadystatechange = function () {//Call a function when the state changes.
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    alert(xmlhttp.responseText);
-                    console.log(xmlhttp.responseText);
-                }
-            }
-            xmlhttp.send();
-        }
+        var params = {
+  "fromDate":new Date(),
+  "toDate": new Date()
+    }
+    xhr = new XMLHttpRequest();
+    var url = "https://cors-anywhere.herokuapp.com/https://localhost:5001/getlogs";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = function () { 
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        var json = JSON.parse(xhr.responseText);
+        console.log(json);
+    }
+}
+var data = JSON.stringify({"fromDate":"2019-03-13T19:07:30.695Z","toDate":"2019-03-15T19:07:32.695Z"});
+xhr.send(data);
     </script>
     <title>
         Mock Test

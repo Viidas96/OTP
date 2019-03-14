@@ -1,6 +1,4 @@
 const fs = require('fs');
-const AsyncLock = require('async-lock');
-var lock = new AsyncLock();
 
 /**
  * It adds the parameters parameters to a flat file in JSON format.
@@ -9,13 +7,13 @@ var lock = new AsyncLock();
  * @param {String} timestamp 
  * @param {Bool} success 
  */
-function insertFlatFile(clientID, OTP, timestamp, success) {
+//Will happen sync
+ function insertFlatFile(clientID, OTP, timestamp, success) {
   let fileName = 'flatfile.json';
-  lock.acquire('key', function (done) {
     // async work
     var jsonContent = [];
-    fs.exists(fileName, function (exists) {
-      if (exists) {
+    try{
+    if(fs.existsSync(fileName)){
         var contents = fs.readFileSync(fileName);
         if (contents.length == 0) {
           //console.log("No data in file");
@@ -37,36 +35,27 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
           success: success
         };
         jsonContent.push(insertLog);
-        fs.writeFile(fileName, JSON.stringify(jsonContent), function (err) {
-          if (err) {
-            throw err;
-          }
-          console.log('Inserted into flatfile');
-        });
-      } else {
-        let insertLog = {
-          id: 0,
-          clientID: clientID,
-          OTP: OTP,
-          timestamp: timestamp,
-          success: success
-        };
+          fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
+    }
+    else {
+      let insertLog = {
+        id: 0,
+        clientID: clientID,
+        OTP: OTP,
+        timestamp: timestamp,
+        success: success
+      };
 
-        let lines = [];
-        lines.push(insertLog);
-        fs.appendFile(fileName, JSON.stringify(lines), function (err) {
-          if (err) {
-            throw err;
-          }
-          console.log('Inserted into flatfile');
-        });
-      }
-    });
-
-  }, function (err, ret) {
-    // lock released
-  });
-
+      let lines = [];
+      lines.push(insertLog);
+      fs.appendFileSync(fileName, JSON.stringify(lines));
+    }
+    return true;
+  }
+  catch(e)
+  {
+    return false;
+  }
 }
 
 /**
@@ -106,8 +95,37 @@ function generateOtp()
   TODO
   create a function that will return a stringified collection from the flatfile between 2 dates
 */
-function getLogs(startDay, endDay){
+//Will happen sync
+ function getLogs(fromDate, toDate){
+  //Need to read flatfile
+  let fileName = 'flatfile.json';
+  var jsonContent = [];
+  var logsBetweenDates = [];
+  if(fs.existsSync(fileName)) {
+      var contents = fs.readFileSync(fileName);
+      if (contents.length == 0) {
+      }
+      else {
+        jsonContent = JSON.parse(contents);
+      }
 
+      let lastIndex = 0;
+      for (var i = 0; i < jsonContent.length; i++) {
+        var obj = jsonContent[i];
+        var date = new Date(obj.timestamp);
+        
+        if(date >= fromDate && date <= toDate)
+        {
+          logsBetweenDates.push(obj);
+        }
+      }
+
+      return JSON.stringify(logsBetweenDates);
+      
+    } else {
+     //File does not exist
+     return JSON.stringify(logsBetweenDates);
+    }
 }
 
 module.exports = {
