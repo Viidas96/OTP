@@ -68,12 +68,16 @@ function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime.getTime() - createdTime.getTime()) < 60000)
 }
 
-function getRandomInt(max) 
+
+
+//generate otp pin, 5 digit long
+function generateOtp() 
 {
+  
   var arr = [];
   for(var i=0; i<5;i++)
   {
-    arr.push(Math.floor(Math.random()*max)+0);
+    arr.push(Math.floor(Math.random()*10)+0);
   }
   var finalAns = "";
   for(var i=0; i<5;i++)
@@ -81,15 +85,6 @@ function getRandomInt(max)
     finalAns += arr[i];
   }
   return finalAns;
-}
-
-//generate otp pin, 5 digit long
-function generateOtp() {
-  let number = '';
-  for(let i = 0; i < 5; i++){
-    number += getRandomInt(10);
-  }
-  return number;
 }
 
 /*
