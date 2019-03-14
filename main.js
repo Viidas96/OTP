@@ -65,7 +65,9 @@ const fs = require('fs');
  * @param {String} checkTime 
  */
 function validateTime(createdTime, checkTime = new Date()){
-  return ((checkTime.getTime() - createdTime.getTime()) < 60000)
+  createdTime = new Date(createdTime);
+  
+  return ((checkTime - createdTime) < 60000);
 }
 
 //generate otp pin, 5 digit long

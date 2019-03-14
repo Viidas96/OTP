@@ -25,13 +25,13 @@ app.post("/genotp", async (req, res) => {
   const otp = main.generateOtp();
   //clients[clientID].otp = main.generateOtp();
   //clients[clientID].timecreated = new Date().toISOString;
-  const dateTime =  new Date();
+  const dateTime =  new Date().toString();
   var client = {
     clientID: clientID,
     otp:  otp,
     timestamp:dateTime
   };
-
+ // console.log(new Date().getTimezoneOffset());
   clients.push(client);
 
   //send a post request to Notification containing the clientID and the OTP we generated
@@ -53,6 +53,7 @@ app.post("/genotp", async (req, res) => {
 
     //notified = {"status": false};
     //for testing we will do other things in here 
+    //We will never send otp aswell only for testing
     notified = {"status": true,"otp":otp};
   }
 
@@ -65,24 +66,29 @@ app.post("/validate", async (req, res) => {
   //get clientID and pin then validate
   const clientID = req.body.clientID;
   const testOTP = req.body.otp;
-  
+  let response = null;
   let createdTime = clients.find( client => client.clientID === clientID);
   if(createdTime != null)
   {
     createdTime = createdTime.timestamp;
-  let response = null;
+ 
   const clientOTP = clients.find( client => client.clientID === clientID);
   const clientIndex = clients.findIndex(client => client.clientID === clientID);
   if (testOTP == clientOTP.otp) {
     //60000 because it returns miliseconds not seconds
     response = { status : main.validateTime(createdTime)};
+    //if ran out of time clear array
+    if(response.status == false)
+    {
+      clients.splice(clientIndex,1);
+    }
   }
   else {
     response = { status: false };
   }
 
   //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
+  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toString(), response.status);
 
   //remove the object from the array
   //delete clients[clientID];
