@@ -46,7 +46,7 @@ const rootStr = `<!DOCTYPE html>
 				</tr>
 				<tr>
 					<td><code>/validate</code></td>
-					<td><code>Tests a givin OTP and returns the status</code></td>
+					<td><code>Tests a given OTP and returns the status</code></td>
 					<td><code>POST</code></td>
 					<td><code>clientID: string, otp: string</code></td>
 					<td><code>'clientID': 'c12345', 'otp': '12345'</code></td>
@@ -55,7 +55,7 @@ const rootStr = `<!DOCTYPE html>
 				</tr>
 				<tr>
 					<td><code>/getlogs</code></td>
-					<td><code>Returns a JSON string with all the log items withing the givin dates, selected by day</code></td>
+					<td><code>Returns a JSON string with all the log items withing the given dates, selected by day</code></td>
 					<td><code>POST</code></td>
 					<td><code>startDate : string, endDate: string</code></td>
 					<td><code>'startDate': '2019-03-13T18:56:42.121Z', 'endDate': '2019-03-13T19:02:16.323Z'</code></td>
