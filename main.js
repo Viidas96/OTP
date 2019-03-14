@@ -2,8 +2,13 @@ const fs = require('fs');
 const AsyncLock = require('async-lock');
 var lock = new AsyncLock();
 
-//@author Bryan Janse Van Vuuren u16217498
-//This function will create and insert into a flatfile.
+/**
+ * It adds the parameters parameters to a flat file in JSON format.
+ * @param {String} clientID 
+ * @param {String} OTP 
+ * @param {String} timestamp 
+ * @param {Bool} success 
+ */
 function insertFlatFile(clientID, OTP, timestamp, success) {
   let fileName = 'flatfile.json';
   lock.acquire('key', function (done) {
@@ -64,15 +69,27 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
 
 }
 
+/**
+ * It checks the time the pin was created and checks it against the current time
+ * and if its less than a minute it returns true  otherwise false.
+ * @param {Date} createdTime 
+ * @param {Date} checkTime 
+ */
 function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime.getTime() - createdTime.getTime()) < 60000)
 }
 
+/**
+ * Returns a random integer to a max.
+ * @param {int} max 
+ */
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-//generate otp pin, 5 digit long
+/**
+ * Returns a 5 digit OTP string.
+ */
 function generateOtp() {
   let number = '';
   for(let i = 0; i < 5; i++){
@@ -80,6 +97,12 @@ function generateOtp() {
   }
   return number;
 }
+
+/**
+ * It returns logs from the startDay to the endDay.
+ * @param {Date} startDay 
+ * @param {Date} endDay 
+ */
 
 /*
   TODO
