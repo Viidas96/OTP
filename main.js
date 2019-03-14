@@ -68,8 +68,19 @@ function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime.getTime() - createdTime.getTime()) < 60000)
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+function getRandomInt(max) 
+{
+  var arr = [];
+  for(var i=0; i<5;i++)
+  {
+    arr.push(Math.floor(Math.random()*max)+0);
+  }
+  var finalAns = "";
+  for(var i=0; i<5;i++)
+  {
+    finalAns += arr[i];
+  }
+  return finalAns;
 }
 
 //generate otp pin, 5 digit long
