@@ -53,15 +53,6 @@ const rootStr = `<!DOCTYPE html>
 					<td><code>status: bool</code></td>
 					<td><code>'status': true</code></td>
 				</tr>
-				<tr>
-					<td><code>/getlogs</code></td>
-					<td><code>Returns a JSON string with all the log items withing the given dates, selected by day</code></td>
-					<td><code>POST</code></td>
-					<td><code>startDate : string, endDate: string</code></td>
-					<td><code>'startDate': '2019-03-13T18:56:42.121Z', 'endDate': '2019-03-13T19:02:16.323Z'</code></td>
-					<td><code>a list containing multiple objects of {id: int, clientID: string, OTP: string, timeStamp: string, success: bool</code></td>
-					<td><code>'id' : 1, 'clientID': 'c12345', 'OTP': '12345', 'timeStamp': '2019-03-13T19:07:30.695Z', 'success': true</code></td>
-				</tr>
 			</table>
 		</div>
 	</body>
@@ -168,29 +159,5 @@ app.post("/validate", async (req, res) => {
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post("/getlogs", async (req, res) => {
-  //test data because function not implemented fully
-  const fromDate = new Date(req.body.fromDate);
-  const toDate = new Date(req.body.toDate);
-  
-  let result = main.getLogs(fromDate,toDate);
-
-  res.json(result);
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //running the server
-app.listen(process.env.PORT || 5001, () => console.log(`Example app listening on port ` + process.env.PORT ));
-//Bryan Testing
-/*let valid = false;
-valid = main.insertFlatFile(1,'555000','2019-03-13T19:07:30.695Z',false);
-console.log(valid);
-valid = main.insertFlatFile(1,'555001','2019-03-14T19:07:35.695Z',false);
-console.log(valid);
-//main.insertFlatFile(1,'555002','2019-03-15T19:07:32.695Z',false);
-//main.insertFlatFile(1,'555003','2019-03-11T19:07:32.695Z',false);
-//main.insertFlatFile(1,'555004','2019-03-13T19:07:32.695Z',false);
-//main.insertFlatFile(1,'555005','2019-03-13T19:07:32.695Z',false);
-let result = main.getLogs(new Date('2019-03-13T19:07:30.695Z'),new Date('2019-03-14T19:07:30.695Z'));
-console.log(result);*/
+app.listen(process.env.PORT, () => console.log(`API Running on heroku`));
