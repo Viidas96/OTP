@@ -80,16 +80,6 @@ app.post("/genotp", async (req, res) => {
   //generate a 5 digit OTP
   const clientID = req.body.clientID;
   const otp = main.generateOtp();
-  //clients[clientID].otp = main.generateOtp();
-  //clients[clientID].timecreated = new Date().toISOString;
-  const dateTime =  new Date().toString();
-  var client = {
-    clientID: clientID,
-    otp:  otp,
-    timestamp:dateTime
-  };
- // console.log(new Date().getTimezoneOffset());
-  clients.push(client);
 
   //send a post request to Notification containing the clientID and the OTP we generated
   let notified = null;
@@ -107,12 +97,19 @@ app.post("/genotp", async (req, res) => {
     notified = await notifiedRes.json();
   }
   catch (err) {
-
-    //notified = {"status": false};
-    //for testing we will do other things in here 
-    //We will never send otp aswell only for testing
-    notified = {"status": true,"otp":otp};
+    notified = {"status": false};
   }
+
+  //create timestamp after notifications is polled
+  const dateTime =  new Date().toString();
+
+  var client = {
+    clientID: clientID,
+    otp:  otp,
+    timestamp:dateTime
+  };
+
+  clients.push(client);
 
   res.json(notified);
 });
