@@ -4,25 +4,6 @@
 <head>
     <script>
         /*
-        function getLogs(fromDate, toDate) {
-            fromDate = new Date(fromDate);
-            toDate = new Date(toDate);
-            xhr = new XMLHttpRequest();
-            var url = "http://localhost:5001/getlogs";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    document.getElementById("logs").innerHTML = json;
-                }
-            }
-            //"2019-03-15T19:07:32.695Z"
-            var data = JSON.stringify({ "fromDate": fromDate.toISOString(),"toDate": toDate.toISOString() });
-            xhr.send(data);
-        }
-
         function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
@@ -57,25 +38,6 @@
             xhr.send(data);
         }
 */
-        function getLogs(fromDate, toDate) {
-            fromDate = new Date(fromDate);
-            toDate = new Date(toDate);
-            xhr = new XMLHttpRequest();
-            var url = "https://otp-ocean.herokuapp.com/getlogs";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    document.getElementById("logs").innerHTML = json;
-                }
-            }
-            //"2019-03-15T19:07:32.695Z"
-            var data = JSON.stringify({ "fromDate": fromDate.toISOString(),"toDate": toDate.toISOString() });
-            xhr.send(data);
-        }
-
         function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
