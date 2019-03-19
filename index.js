@@ -160,4 +160,4 @@ app.post("/validate", async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //running the server
-app.listen(process.env.PORT || 5001, () => console.log(`Example app listening on port ` + process.env.PORT ));
+app.listen(process.env.PORT, () => console.log(`API Running on heroku`));
