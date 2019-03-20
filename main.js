@@ -35,7 +35,7 @@ const fs = require('fs');
           success: success
         };
         jsonContent.push(insertLog);
-          fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
+        fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
     }
     else {
       let insertLog = {
@@ -87,22 +87,13 @@ function generateOtp()
   return finalAns;
 }
 
-/**
- * It returns logs from the startDay to the endDay.
- * @param {Date} startDay 
- * @param {Date} endDay 
- */
-
-/*
-  TODO
-  create a function that will return a stringified collection from the flatfile between 2 dates
-*/
 //Will happen sync
- function getLogs(fromDate, toDate){
+//This function gets all logs then removes them
+ function getLogs(){
   //Need to read flatfile
   let fileName = 'flatfile.json';
   var jsonContent = [];
-  var logsBetweenDates = [];
+  var logs = [];
   if(fs.existsSync(fileName)) {
       var contents = fs.readFileSync(fileName);
       if (contents.length == 0) {
@@ -114,19 +105,18 @@ function generateOtp()
       let lastIndex = 0;
       for (var i = 0; i < jsonContent.length; i++) {
         var obj = jsonContent[i];
-        var date = new Date(obj.timestamp);
-        
-        if(date >= fromDate && date <= toDate)
-        {
-          logsBetweenDates.push(obj);
-        }
+        logs.push(obj);
       }
 
-      return JSON.stringify(logsBetweenDates);
+      //Delete contents of file
+      fs.writeFileSync(fileName,"");
+
+      return JSON.stringify(logs);
       
     } else {
      //File does not exist
-     return JSON.stringify(logsBetweenDates);
+     fs.writeFileSync(fileName,"");
+     return JSON.stringify(logs);
     }
 }
 
