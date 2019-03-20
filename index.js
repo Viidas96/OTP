@@ -156,5 +156,18 @@ app.post("/validate", async (req, res) => {
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//function to run in intervals
+var minutes = 10;
+var the_interval = minutes * 60 * 1000;
+setInterval(function() {
+  console.log("I am doing my "+minutes+" minutes check");
+  // do your stuff here
+  var result = main.getLogs();
+  //Need to call post to other sub system
+}, the_interval);
+
 //running the server
-app.listen(process.env.PORT, () => console.log(`API Running on heroku`));
+app.listen(process.env.PORT, () => 
+{
+  console.log(`API Running on heroku`);
+});
