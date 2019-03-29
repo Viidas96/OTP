@@ -59,7 +59,7 @@ const rootStr = `<!DOCTYPE html>
 </html>`;
 
 //This is needed
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", '*');
   res.header("Access-Control-Allow-Credentials", true);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -92,20 +92,20 @@ app.post("/genotp", async (req, res) => {
       body: JSON.stringify({
         clientID: req.body.clientID,
         otp: otp
-      })      
+      })
     });
 
     //wait for the response from notifications
     notified = await notifiedRes.json();
 
     //create the timestamp
-    const dateTime =  new Date().toString();
+    const dateTime = new Date().toString();
 
     //save the client in the validation array
     var client = {
       clientID: clientID,
-      otp:  otp,
-      timestamp:dateTime
+      otp: otp,
+      timestamp: dateTime
     };
     clients.push(client);
 
@@ -113,7 +113,7 @@ app.post("/genotp", async (req, res) => {
     res.json(notified);
   }
   catch (err) {
-    res.status(503).json({error: "Service Unavailable"});
+    res.status(503).json({ error: "Service Unavailable" });
   }
 });
 
@@ -124,53 +124,44 @@ app.post("/validate", async (req, res) => {
   const clientID = req.body.clientID;
   const testOTP = req.body.otp;
   let response = null;
-  let createdTime = clients.find( client => client.clientID === clientID);
-  if(createdTime != null)
-  {
+  let createdTime = clients.find(client => client.clientID === clientID);
+  if (createdTime != null) {
     createdTime = createdTime.timestamp;
- 
-  const clientOTP = clients.find( client => client.clientID === clientID);
-  const clientIndex = clients.findIndex(client => client.clientID === clientID);
-  if (testOTP == clientOTP.otp) {
-    //60000 because it returns miliseconds not seconds
-    response = { status : main.validateTime(createdTime)};
-    //if ran out of time clear array
-    if(response.status == false)
-    {
-      clients.splice(clientIndex,1);
+
+    const clientOTP = clients.find(client => client.clientID === clientID);
+    const clientIndex = clients.findIndex(client => client.clientID === clientID);
+    if (testOTP == clientOTP.otp) {
+      main.validateTime(createdTime) ? response = { status: false } : response = { status: false } };
+      //if ran out of time clear array
+      if (response.status == false) {
+        //needed to be saved because this is an unsuccesful attempt
+        var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
+        clients.splice(clientIndex, 1);
+      }
+    else {
+      response = { status: false };
+      var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
+      clients.splice(clientIndex, 1);
     }
   }
   else {
     response = { status: false };
   }
-
-  //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
-
-  //remove the object from the array
-  //delete clients[clientID];
-  clients.splice(clientIndex,1);
-  }
-  else
-  {
-    response = { status: false };
-  }
-  res.json(response);
+  response.status ? res.status(200).json(response) : res.status(401).json(response);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //function to run in intervals
 var minutes = 10;
 var the_interval = minutes * 60 * 1000;
-setInterval(function() {
-  console.log("I am doing my "+minutes+" minutes check");
+setInterval(function () {
+  console.log("I am doing my " + minutes + " minutes check");
   // do your stuff here
   var result = main.getLogs();
   //Need to call post to other sub system
 }, the_interval);
 
 //running the server
-app.listen(process.env.PORT, () => 
-{
+app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });
