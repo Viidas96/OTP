@@ -97,7 +97,7 @@ app.post("/genotp", async (req, res) => {
     notified = await notifiedRes.json();
   }
   catch (err) {
-    notified = {"status": false};
+    notified = {"status": false, "otp": otp};
   }
 
   //create timestamp after notifications is polled
