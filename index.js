@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const main = require('./main.js');
-
+var moment = require('moment');
 const app = express();
 //const port = process.env.PORT || 8080;
 let clients = [];
@@ -140,9 +140,9 @@ app.post("/validate", async (req, res) => {
   else {
     response = { status: false };
   }
-
+  
   //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
+  var value = main.insertFlatFile(clientID, clientOTP.otp, moment().add(2,'hours').unix(), response.status);
 
   //remove the object from the array
   //delete clients[clientID];
@@ -157,16 +157,23 @@ app.post("/validate", async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //function to run in intervals
-var minutes = 10;
+var minutes = 1;
 var the_interval = minutes * 60 * 1000;
-setInterval(function() {
+ setInterval(function() {
+  reportingUrl = "https://fnbreports-6455.nodechef.com/api"
   console.log("I am doing my "+minutes+" minutes check");
   // do your stuff here
   var result = main.getLogs();
+  console.log(JSON.stringify({
+    system:"OTPS",
+    data: result
+  }));
+  //console.log(result);
   //Need to call post to other sub system
 }, the_interval);
 
 //running the server
+//process.env.PORT
 app.listen(process.env.PORT, () => 
 {
   console.log(`API Running on heroku`);
