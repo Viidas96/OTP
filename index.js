@@ -98,6 +98,9 @@ app.post("/genotp", async (req, res) => {
     //wait for the response from notifications
     notified = await notifiedRes.json();
 
+  //create timestamp after notifications is polled
+  const dateTime =  new Date().toString();
+
     //create the timestamp
     const dateTime = new Date().toString();
 
@@ -113,7 +116,10 @@ app.post("/genotp", async (req, res) => {
     res.json(notified);
   }
   catch (err) {
-    res.status(503).json({ error: "Service Unavailable" });
+    //for testing purposes
+    notified = {"status": false, "otp": otp};
+    //res.status(503).json({ error: "Service Unavailable" });
+    res.status(200).json(notified);
   }
 });
 
