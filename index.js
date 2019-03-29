@@ -69,7 +69,7 @@ app.use(function(req, res, next) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
-const notificationUrl = "";
+const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
 
 app.get("/", (req, res) => {
   res.send(rootStr);
@@ -85,33 +85,36 @@ app.post("/genotp", async (req, res) => {
   let notified = null;
 
   try {
+    //poll notification to send the OTP to the user
     const notifiedRes = await fetch(notificationUrl, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         clientID: req.body.clientID,
         otp: otp
-      }),
-      headers: { 'Content-Type': 'application/json' }
+      })      
     });
 
+    //wait for the response from notifications
     notified = await notifiedRes.json();
+
+    //create the timestamp
+    const dateTime =  new Date().toString();
+
+    //save the client in the validation array
+    var client = {
+      clientID: clientID,
+      otp:  otp,
+      timestamp:dateTime
+    };
+    clients.push(client);
+
+    //forward the response from notification
+    res.json(notified);
   }
   catch (err) {
-    notified = {"status": false};
+    res.status(503).json({error: "Service Unavailable"});
   }
-
-  //create timestamp after notifications is polled
-  const dateTime =  new Date().toString();
-
-  var client = {
-    clientID: clientID,
-    otp:  otp,
-    timestamp:dateTime
-  };
-
-  clients.push(client);
-
-  res.json(notified);
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
