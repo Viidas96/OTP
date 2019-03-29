@@ -69,7 +69,8 @@ app.use(function (req, res, next) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
-const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
+//const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
+const notificationUrl = "";
 
 app.get("/", (req, res) => {
   res.send(rootStr);
