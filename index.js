@@ -126,11 +126,11 @@ app.post("/genotp", async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     });
 
-    notified = await notifiedRes;
+    notified = await notifiedRes.json();
   }
   catch (err) {
     //notified = {"status": false, "otp": otp};
-    notified.status(503).json({ "status": false });
+    notified.json({ "status": false });
     //notified.status = 503;
   }
 
@@ -145,12 +145,7 @@ app.post("/genotp", async (req, res) => {
 
   clients.push(client);
 
-  if (notified.statusCode === 200) {
-    res.status(200).json({ "status": true });
-  }
-  else {
-    res.status(notified.statusCode).json({ "status": false });
-  }
+  res.json(notified);
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,12 +184,7 @@ app.post("/validate", async (req, res) => {
     response = { status: false };
   }
 
-  if (response.status == false) {
-    res.status(401).json(response);
-  }
-  else {
-    res.status(200).json(response);
-  }
+  res.json(response);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
