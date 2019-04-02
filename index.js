@@ -212,6 +212,6 @@ setInterval(function () {
 }, the_interval);
 
 //running the server
-app.listen(process.env.PORT || 5001, () => {
+app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });
