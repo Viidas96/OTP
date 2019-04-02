@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const main = require('./main.js');
-
+var moment = require('moment');
 const app = express();
 //const port = process.env.PORT || 8080;
 let clients = [];
@@ -24,7 +24,7 @@ const rootStr = `<!DOCTYPE html>
 	</head>
 	<body>
 		<div>
-			<table style="width:900px">
+			<table style="width:1000px">
 				<tr><td colspan="7"><p>Endpoints Available</p></td></tr>
 				<tr>
 					<td><p>Endpoint</p></td>
@@ -54,22 +54,54 @@ const rootStr = `<!DOCTYPE html>
 					<td><code>'status': true</code></td>
 				</tr>
 			</table>
+			<table style="width:720px">
+				<tr>
+					<td>Endpoint</td>
+					<td>Statuses returned</td>
+					<td>Code</td>
+				</tr>
+				<tr>
+					<td>/genotp</td>
+					<td>Success</td>
+					<td>200</td>
+				</tr>
+				<tr>
+					<td>/genotp</td>
+					<td>/genotp Failure</td>
+					<td>503</td>
+				</tr>
+				<tr>
+					<td>/genotp</td>
+					<td>Notification Failure</td>
+					<td>Appropriot error sent by Notification</td>
+				</tr>
+				<tr>
+					<td>/validate</td>
+					<td>Success</td>
+					<td>200</td>
+				</tr>
+				<tr>
+					<td>/validate</td>
+					<td>Failure</td>
+					<td>401</td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>`;
 
 //This is needed
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", '*');
   res.header("Access-Control-Allow-Credentials", true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET,POST');
   res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
   next();
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
-const notificationUrl = "";
+const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
 
 app.get("/", (req, res) => {
   res.send(rootStr);
@@ -94,24 +126,31 @@ app.post("/genotp", async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     });
 
-    notified = await notifiedRes.json();
+    notified = await notifiedRes;
   }
   catch (err) {
-    notified = {"status": false, "otp": otp};
+    //notified = {"status": false, "otp": otp};
+    notified.status(503).json({ "status": false });
+    //notified.status = 503;
   }
 
   //create timestamp after notifications is polled
-  const dateTime =  new Date().toString();
+  const dateTime = new Date().toString();
 
   var client = {
     clientID: clientID,
-    otp:  otp,
-    timestamp:dateTime
+    otp: otp,
+    timestamp: dateTime
   };
 
   clients.push(client);
 
-  res.json(notified);
+  if (notified.statusCode === 200) {
+    res.status(200).json({ "status": true });
+  }
+  else {
+    res.status(notified.statusCode).json({ "status": false });
+  }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,53 +160,62 @@ app.post("/validate", async (req, res) => {
   const clientID = req.body.clientID;
   const testOTP = req.body.otp;
   let response = null;
-  let createdTime = clients.find( client => client.clientID === clientID);
-  if(createdTime != null)
-  {
+  let createdTime = clients.find(client => client.clientID === clientID);
+  if (createdTime != null) {
     createdTime = createdTime.timestamp;
- 
-  const clientOTP = clients.find( client => client.clientID === clientID);
-  const clientIndex = clients.findIndex(client => client.clientID === clientID);
-  if (testOTP == clientOTP.otp) {
-    //60000 because it returns miliseconds not seconds
-    response = { status : main.validateTime(createdTime)};
-    //if ran out of time clear array
-    if(response.status == false)
-    {
-      clients.splice(clientIndex,1);
+
+    const clientOTP = clients.find(client => client.clientID === clientID);
+    const clientIndex = clients.findIndex(client => client.clientID === clientID);
+    if (testOTP == clientOTP.otp) {
+      //60000 because it returns miliseconds not seconds
+      response = { status: main.validateTime(createdTime) };
+      //if ran out of time clear array
+      if (response.status == false) {
+        clients.splice(clientIndex, 1);
+      }
     }
+    else {
+      response = { status: false };
+    }
+
+    //insert a log of this validation to the flatfile
+    var value = main.insertFlatFile(clientID, clientOTP.otp, moment().add(2, 'hours').unix(), response.status);
+
+    //remove the object from the array
+    //delete clients[clientID];
+    clients.splice(clientIndex, 1);
   }
   else {
     response = { status: false };
   }
 
-  //insert a log of this validation to the flatfile
-  var value = main.insertFlatFile(clientID, clientOTP.otp, new Date().toISOString(), response.status);
-
-  //remove the object from the array
-  //delete clients[clientID];
-  clients.splice(clientIndex,1);
+  if (response.status == false) {
+    res.status(401).json(response);
   }
-  else
-  {
-    response = { status: false };
+  else {
+    res.status(200).json(response);
   }
-  res.json(response);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //function to run in intervals
-var minutes = 10;
+var minutes = 1;
 var the_interval = minutes * 60 * 1000;
-setInterval(function() {
-  console.log("I am doing my "+minutes+" minutes check");
+setInterval(function () {
+  reportingUrl = "https://fnbreports-6455.nodechef.com/api"
+  console.log("I am doing my " + minutes + " minutes check");
   // do your stuff here
   var result = main.getLogs();
+  console.log(JSON.stringify({
+    system: "OTPS",
+    data: result
+  }));
+  //console.log(result);
   //Need to call post to other sub system
 }, the_interval);
 
 //running the server
-app.listen(process.env.PORT, () => 
-{
+//process.env.PORT
+app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });
