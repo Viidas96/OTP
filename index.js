@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const main = require('./main.js');
 var moment = require('moment');
 const app = express();
+const fetch = require('node-fetch');
 //const port = process.env.PORT || 8080;
 let clients = [];
 app.use(express.json());
@@ -99,6 +100,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.set('port', process.env.PORT || 5001);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
 const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
@@ -110,8 +113,8 @@ app.get("/", (req, res) => {
 //our endpoint and it expects a json object {'clientID':'someID'}
 app.post("/genotp", async (req, res) => {
   //generate a 5 digit OTP
-  const clientID = req.body.clientID;
-  const otp = main.generateOtp();
+  const tclientID = req.body.clientID;
+  const totp = main.generateOtp();
 
   //send a post request to Notification containing the clientID and the OTP we generated
   let notified = null;
@@ -121,16 +124,17 @@ app.post("/genotp", async (req, res) => {
       method: 'POST',
       body: JSON.stringify({
         clientID: req.body.clientID,
-        otp: otp
+        otp: totp
       }),
       headers: { 'Content-Type': 'application/json' }
     });
 
-    notified = await notifiedRes;
+    notified = await notifiedRes.text();
   }
   catch (err) {
     //notified = {"status": false, "otp": otp};
-    notified.status(503).json({ "status": false });
+    //console.log(err);
+    notified = { "status": false };
     //notified.status = 503;
   }
 
@@ -138,19 +142,17 @@ app.post("/genotp", async (req, res) => {
   const dateTime = new Date().toString();
 
   var client = {
-    clientID: clientID,
-    otp: otp,
+    clientID: tclientID,
+    otp: totp,
     timestamp: dateTime
   };
 
+  if (notified == "Email sent successfully") {
+    notified = { "status": true };
+  }
+  //console.log(notified);
   clients.push(client);
-
-  if (notified.statusCode === 200) {
-    res.status(200).json({ "status": true });
-  }
-  else {
-    res.status(notified.statusCode).json({ "status": false });
-  }
+  res.json(notified);
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,12 +191,7 @@ app.post("/validate", async (req, res) => {
     response = { status: false };
   }
 
-  if (response.status == false) {
-    res.status(401).json(response);
-  }
-  else {
-    res.status(200).json(response);
-  }
+  res.json(response);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,7 +212,10 @@ setInterval(function () {
 }, the_interval);
 
 //running the server
-//process.env.PORT
 app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });
+//for local testing
+// app.listen(5001, () => {
+//   console.log(`API Running on port 5001`);
+// });

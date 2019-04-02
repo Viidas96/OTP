@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const request = require('request');
 /**
  * It adds the parameters parameters to a flat file in JSON format.
  * @param {String} clientID 
@@ -120,9 +120,11 @@ function generateOtp()
     }
 }
 
+
 module.exports = {
   generateOtp,
   insertFlatFile,
   getLogs,
   validateTime
+  //callNotification
 };
