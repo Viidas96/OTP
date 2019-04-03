@@ -55,7 +55,7 @@ const rootStr = `<!DOCTYPE html>
 					<td><code>'status': true</code></td>
 				</tr>
 			</table>
-			<table style="width:720px">
+			<!--<table style="width:720px">
 				<tr>
 					<td>Endpoint</td>
 					<td>Statuses returned</td>
@@ -86,7 +86,7 @@ const rootStr = `<!DOCTYPE html>
 					<td>Failure</td>
 					<td>401</td>
 				</tr>
-			</table>
+			</table>-->
 		</div>
 	</body>
 </html>`;
@@ -150,6 +150,7 @@ app.post("/genotp", async (req, res) => {
   else {
     notified = { "status": false };
   }
+  
   clients.push(client);
   res.json(notified);
 });
