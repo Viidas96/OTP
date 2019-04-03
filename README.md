@@ -15,6 +15,18 @@
 ## Unit testing 
 - Unit tests are setup using [jest](https://jestjs.io/docs/en/getting-started) and tests are written in main.test.js
 ---
+
+## Functions and their purpose
+- function validateTime(createdTime, checkTime = new Date()): 
+  This function validates the time of the OTP generation.
+- function generateOtp() :
+  This function generates a 5 digit pin.
+- function getLogs(fromDate, toDate):
+  This function gets log report from the date specified by the user.
+-  function insertFlatFile(clientID, OTP, timestamp, success):
+  This function inserts the details into a file, details entered are clientID, OTP, timestamp and success. 
+---
+
 ## How it works
 - Authentication team sends the OTP team the client ID.
 - OTP team generates the OPT.
