@@ -148,10 +148,11 @@ app.post("/genotp", async (req, res) => {
   };
 
   if (notified == "Email sent successfully") {
-    notified = { "status": true };
+    notified = {"status": true };
   }
   //console.log(notified);
   clients.push(client);
+  //needs to be notified
   res.json(notified);
 });
 
@@ -170,18 +171,18 @@ app.post("/validate", async (req, res) => {
     const clientIndex = clients.findIndex(client => client.clientID === clientID);
     if (testOTP == clientOTP.otp) {
       //60000 because it returns miliseconds not seconds
-      response = { status: main.validateTime(createdTime) };
+      response = {status: main.validateTime(createdTime) };
       //if ran out of time clear array
       if (response.status == false) {
         clients.splice(clientIndex, 1);
       }
     }
     else {
-      response = { status: false };
+      response = {status: false};
     }
 
     //insert a log of this validation to the flatfile
-    var value = main.insertFlatFile(clientID, clientOTP.otp, moment().add(2, 'hours').unix(), response.status);
+    var value = main.insertFlatFile(clientID, clientOTP.otp, moment().unix(), response.status);
 
     //remove the object from the array
     //delete clients[clientID];
@@ -194,24 +195,46 @@ app.post("/validate", async (req, res) => {
   res.json(response);
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //function to run in intervals
-var minutes = 1;
+var minutes = 10;
 var the_interval = minutes * 60 * 1000;
-setInterval(function () {
-  reportingUrl = "https://fnbreports-6455.nodechef.com/api"
-  console.log("I am doing my " + minutes + " minutes check");
+setInterval(async function () {
+  reportingUrl = "https://fnbreports-6455.nodechef.com/api";
+  console.log("Sending Logs to reporting");
   // do your stuff here
   var result = main.getLogs();
-  console.log(JSON.stringify({
-    system: "OTPS",
-    data: result
-  }));
+  if(result.length == 0)
+  {
+    //Do nothing
+    console.log("No data to send");
+  }
+  else
+  {
+    result = JSON.stringify(result);
+    try {
+      const reportingRes = await fetch(reportingUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          system: "OTPS",
+          data: result
+        }),
+        headers: {'Content-Type': 'application/json'}
+      });
+  
+      reporting = await reportingRes.text();
+      console.log(reporting);
+    }
+    catch (err) {
+      reporting = { "status": false };
+      console.log(JSON.stringify(reporting));
+    }
+  }
   //console.log(result);
   //Need to call post to other sub system
 }, the_interval);
 
 //running the server
+//process.env.PORT
 app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });

@@ -9,6 +9,7 @@ const fs = require('fs');
 //Will happen sync
  function insertFlatFile(clientID, OTP, timestamp, success) {
   let fileName = 'flatfile.json';
+  timestamp = timestamp * 1000;
     // async work
     var jsonContent = [];
     try{
@@ -21,13 +22,10 @@ const fs = require('fs');
           jsonContent = JSON.parse(contents);
         }
 
-        let lastIndex = 0;
         for (var i = 0; i < jsonContent.length; i++) {
           var obj = jsonContent[i];
-          lastIndex = obj.id;
         }
         let insertLog = {
-          id: lastIndex + 1,
           clientID: clientID,
           OTP: OTP,
           timestamp: timestamp,
@@ -38,7 +36,6 @@ const fs = require('fs');
     }
     else {
       let insertLog = {
-        id: 0,
         clientID: clientID,
         OTP: OTP,
         timestamp: timestamp,
@@ -110,12 +107,12 @@ function generateOtp()
       //Delete contents of file
       fs.writeFileSync(fileName,"");
 
-      return JSON.stringify(logs);
+      return logs;
       
     } else {
      //File does not exist
      fs.writeFileSync(fileName,"");
-     return JSON.stringify(logs);
+     return logs;
     }
 }
 
