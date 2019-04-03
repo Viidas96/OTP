@@ -38,7 +38,7 @@
 - OTP team then sends the audit log to the Report team.
 ---
 ## Sequence Diagrams
-![image](https://raw.githubusercontent.com/Viidas96/OTP/Documentation/OTPAuthentication.jpg)
+![image](OTPAuthentication.jpg)
 1. Authentication sends the client ID to the the OTP who generates a pin
 2. OTP sends the generated pin along with the client ID to notifications so they can send a notification the OTP to the client with the clientID.
 3. Notifications sends delivery report(true/false)
@@ -46,7 +46,7 @@
 5. Authentication sends the OTP received from ATM simulation that the client had entered along with the client ID for OTP to validate by checking whether the OTP sent through is the same as the OTP generated.
 6. OTP sends back the the validity report(true/false)
 
-![image](https://raw.githubusercontent.com/Viidas96/OTP/Documentation/newLogs.jpg)
+![image](newLogs.jpg)
 1. OTP sends their transaction logs to Reporting every 10 minutes.
 2. Reporting sends response(successful/not successful)
 ---
