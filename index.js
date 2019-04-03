@@ -132,10 +132,7 @@ app.post("/genotp", async (req, res) => {
     notified = await notifiedRes.text();
   }
   catch (err) {
-    //notified = {"status": false, "otp": otp};
-    //console.log(err);
     notified = { "status": false };
-    //notified.status = 503;
   }
 
   //create timestamp after notifications is polled
@@ -150,7 +147,9 @@ app.post("/genotp", async (req, res) => {
   if (notified == "Email sent successfully") {
     notified = { "status": true };
   }
-  //console.log(notified);
+  else {
+    notified = { "status": false };
+  }
   clients.push(client);
   res.json(notified);
 });
