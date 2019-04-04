@@ -3,46 +3,11 @@
 
 <head>
     <script>
-        
-        /*function createOTP(clientID)
-        {
-            xhr = new XMLHttpRequest();
-            var url = "http://localhost:5001/genotp";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    document.getElementById('otp').innerText = "OTP pin sent to notification subsystem: " + json.otp;
-                }
-            }
-            var data = JSON.stringify({ "clientID": clientID});
-            xhr.send(data);
-        }
-
-        function validateOTP(clientID,otp)
-        {
-            xhr = new XMLHttpRequest();
-            var url = "http://localhost:5001/validate";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    document.getElementById('pinValid').innerHTML = "Pin is:" + json.status;
-                }
-            }
-            var data = JSON.stringify({ "clientID": clientID, "otp": otp });
-            xhr.send(data);
-        }*/
-
         function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
-            //var url = "https://otp-ocean.herokuapp.com/genotp";
-            var url = "http://localhost:5001/genotp";
+            var url = "https://otp-ocean.herokuapp.com/genotp";
+            //var url = "http://localhost:5001/genotp";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/json");
             xhr.onreadystatechange = function () {
@@ -60,6 +25,7 @@
         {
             xhr = new XMLHttpRequest();
             var url = "https://otp-ocean.herokuapp.com/validate";
+            //var url = "http://localhost:5001/validate";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/json");
             xhr.onreadystatechange = function () {
