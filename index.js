@@ -172,10 +172,6 @@ app.post("/validate", async (req, res) => {
     if (testOTP == clientOTP.otp) {
       //60000 because it returns miliseconds not seconds
       response = {status: main.validateTime(createdTime) };
-      //if ran out of time clear array
-      if (response.status == false) {
-        clients.splice(clientIndex, 1);
-      }
     }
     else {
       response = {status: false};
@@ -190,6 +186,7 @@ app.post("/validate", async (req, res) => {
   }
   else {
     response = { status: false };
+    clients.splice(clientIndex, 1);
   }
 
   res.json(response);
