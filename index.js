@@ -196,7 +196,7 @@ app.post("/validate", async (req, res) => {
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //function to run in intervals
-var minutes = 10;
+var minutes = 1;
 var the_interval = minutes * 60 * 1000;
 setInterval(async function () {
   reportingUrl = "https://fnbreports-6455.nodechef.com/api";

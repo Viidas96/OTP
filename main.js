@@ -8,7 +8,7 @@ const fs = require('fs');
  */
 //Will happen sync
  function insertFlatFile(clientID, OTP, timestamp, success) {
-  let fileName = 'flatfile.json';
+  let fileName = '${__dirname}/flatfile.json';
   timestamp = timestamp * 1000;
     // async work
     var jsonContent = [];
@@ -87,7 +87,7 @@ function generateOtp()
 //This function gets all logs then removes them
  function getLogs(){
   //Need to read flatfile
-  let fileName = 'flatfile.json';
+  let fileName = '${__dirname}/flatfile.json';
   var jsonContent = [];
   var logs = [];
   try{
