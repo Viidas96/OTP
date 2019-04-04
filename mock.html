@@ -41,8 +41,8 @@
         function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
-            //var url = "https://otp-ocean.herokuapp.com/genotp";
-            var url = "http://localhost:5001/genotp";
+            var url = "https://otp-ocean.herokuapp.com/genotp";
+            //var url = "http://localhost:5001/genotp";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/json");
             xhr.onreadystatechange = function () {

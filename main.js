@@ -90,6 +90,7 @@ function generateOtp()
   let fileName = 'flatfile.json';
   var jsonContent = [];
   var logs = [];
+  try{
   if(fs.existsSync(fileName)) {
       var contents = fs.readFileSync(fileName);
       if (contents.length == 0) {
@@ -114,6 +115,12 @@ function generateOtp()
      fs.writeFileSync(fileName,"");
      return logs;
     }
+  }
+  catch(err)
+  {
+    console.log(JSON.stringify(err));
+    return logs;
+  }
 }
 
 module.exports = {
