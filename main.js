@@ -1,4 +1,14 @@
 const fs = require('fs');
+const { Client } = require('pg')
+//const client = new Client('postgres://daafgflhjhwmzt:1d7788d71fbe3cf20d1814dc9cb8159b57a5b7dff28cd5c01b0ad820c71e3932@ec2-184-73-210-189.compute-1.amazonaws.com:5432/de6ur42bgaj3ss');
+const client = new Client({
+  host: 'ec2-184-73-210-189.compute-1.amazonaws.com',
+  port: 5432,
+  user: 'daafgflhjhwmzt',
+  database:'de6ur42bgaj3ss',
+  ssl:true,
+  password: '1d7788d71fbe3cf20d1814dc9cb8159b57a5b7dff28cd5c01b0ad820c71e3932',
+})
 /**
  * It adds the parameters parameters to a flat file in JSON format.
  * @param {String} clientID 
@@ -7,8 +17,20 @@ const fs = require('fs');
  * @param {Bool} success 
  */
 //Will happen sync
- function insertFlatFile(clientID, OTP, timestamp, success) {
-  let fileName = 'flatfile.json';
+  async function insertFlatFile(clientID, OTP, timestamp, success) {
+    timestamp = timestamp * 1000;
+    client.query('INSERT INTO public.logs(timestamp,"clientID","OTP",success) VALUES ($1,$2,$3,$4)',[timestamp,clientID,OTP,success])
+    .then(res => {
+      console.log("Inserted");
+      return true;
+    })
+    .catch(e => 
+      {
+        console.error("Failed to insert");
+        console.log(e);
+        return false;
+      });
+ /* let fileName = 'flatfile.json';
   timestamp = timestamp * 1000;
     // async work
     var jsonContent = [];
@@ -51,7 +73,7 @@ const fs = require('fs');
   catch(e)
   {
     return false;
-  }
+  }*/
 }
 
 /**
@@ -85,9 +107,13 @@ function generateOtp()
 
 //Will happen sync
 //This function gets all logs then removes them
- function getLogs(){
+ async function getLogs(){
+  var results = [];
+  results = await client.query('SELECT * FROM public.logs ORDER BY timestamp desc',[]);
+  return results.rows;
+    
   //Need to read flatfile
-  let fileName = 'flatfile.json';
+  /*let fileName = 'flatfile.json';
   var jsonContent = [];
   var logs = [];
   try{
@@ -120,12 +146,13 @@ function generateOtp()
   {
     console.log(JSON.stringify(err));
     return logs;
-  }
+  }*/
 }
 
 module.exports = {
   generateOtp,
   insertFlatFile,
   getLogs,
-  validateTime
+  validateTime,
+  client
 };

@@ -8,6 +8,8 @@ const fetch = require('node-fetch');
 let clients = [];
 app.use(express.json());
 
+main.client.connect();
+
 const rootStr = `<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -199,7 +201,8 @@ setInterval(async function () {
   reportingUrl = "https://fnbreports-6455.nodechef.com/api";
   console.log("Sending Logs to reporting");
   // do your stuff here
-  var result = main.getLogs();
+  var result = await main.getLogs();
+  console.log(JSON.stringify(result));
   if(result.length == 0)
   {
     //Do nothing
@@ -232,7 +235,7 @@ setInterval(async function () {
 
 //running the server
 //process.env.PORT
-app.listen(process.env.PORT, () => {
+app.listen(5001, () => {
   console.log(`API Running on heroku`);
 });
 //for local testing
