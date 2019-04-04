@@ -1,6 +1,6 @@
 const fs = require('fs');
 /**
- * It adds the parameters parameters to a flat file in JSON format.
+ * It adds the parameters to a flat file in JSON format.
  * @param {String} clientID 
  * @param {String} OTP 
  * @param {String} timestamp 
@@ -66,7 +66,9 @@ function validateTime(createdTime, checkTime = new Date()){
   return ((checkTime - createdTime) < 180000);
 }
 
-//generate otp pin, 5 digit long
+/**
+ * It generates a 5 digit OTP pin and returns it.
+ */
 function generateOtp() 
 {
   
@@ -83,8 +85,10 @@ function generateOtp()
   return finalAns;
 }
 
+/**
+ * This will get all the logs return it, and remove them after.
+ */
 //Will happen sync
-//This function gets all logs then removes them
  function getLogs(){
   //Need to read flatfile
   let fileName = 'flatfile.json';
