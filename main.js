@@ -7,32 +7,32 @@ const fs = require('fs');
  * @param {Bool} success 
  */
 //Will happen sync
- function insertFlatFile(clientID, OTP, timestamp, success) {
+function insertFlatFile(clientID, OTP, timestamp, success) {
   let fileName = 'flatfile.json';
   timestamp = timestamp * 1000;
-    // async work
-    var jsonContent = [];
-    try{
-    if(fs.existsSync(fileName)){
-        var contents = fs.readFileSync(fileName);
-        if (contents.length == 0) {
-          //console.log("No data in file");
-        }
-        else {
-          jsonContent = JSON.parse(contents);
-        }
+  // async work
+  var jsonContent = [];
+  try {
+    if (fs.existsSync(fileName)) {
+      var contents = fs.readFileSync(fileName);
+      if (contents.length == 0) {
+        //console.log("No data in file");
+      }
+      else {
+        jsonContent = JSON.parse(contents);
+      }
 
-        for (var i = 0; i < jsonContent.length; i++) {
-          var obj = jsonContent[i];
-        }
-        let insertLog = {
-          clientID: clientID,
-          OTP: OTP,
-          timestamp: timestamp,
-          success: success
-        };
-        jsonContent.push(insertLog);
-        fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
+      for (var i = 0; i < jsonContent.length; i++) {
+        var obj = jsonContent[i];
+      }
+      let insertLog = {
+        clientID: clientID,
+        OTP: OTP,
+        timestamp: timestamp,
+        success: success
+      };
+      jsonContent.push(insertLog);
+      fs.writeFileSync(fileName, JSON.stringify(jsonContent));
     }
     else {
       let insertLog = {
@@ -48,8 +48,7 @@ const fs = require('fs');
     }
     return true;
   }
-  catch(e)
-  {
+  catch (e) {
     return false;
   }
 }
@@ -60,9 +59,9 @@ const fs = require('fs');
  * @param {String} createdTime 
  * @param {String} checkTime 
  */
-function validateTime(createdTime, checkTime = new Date()){
+function validateTime(createdTime, checkTime = new Date()) {
   createdTime = new Date(createdTime);
-  
+
   return ((checkTime - createdTime) < 180000);
 }
 
@@ -71,15 +70,12 @@ function validateTime(createdTime, checkTime = new Date()){
  */
 function generateOtp() 
 {
-  
   var arr = [];
-  for(var i=0; i<5;i++)
-  {
-    arr.push(Math.floor(Math.random()*10)+0);
+  for (var i = 0; i < 5; i++) {
+    arr.push(Math.floor(Math.random() * 10) + 0);
   }
   var finalAns = "";
-  for(var i=0; i<5;i++)
-  {
+  for (var i = 0; i < 5; i++) {
     finalAns += arr[i];
   }
   return finalAns;
@@ -94,8 +90,8 @@ function generateOtp()
   let fileName = 'flatfile.json';
   var jsonContent = [];
   var logs = [];
-  try{
-  if(fs.existsSync(fileName)) {
+  try {
+    if (fs.existsSync(fileName)) {
       var contents = fs.readFileSync(fileName);
       if (contents.length == 0) {
       }
@@ -110,18 +106,17 @@ function generateOtp()
       }
 
       //Delete contents of file
-      fs.writeFileSync(fileName,"");
+      fs.writeFileSync(fileName, "");
 
       return logs;
-      
+
     } else {
-     //File does not exist
-     fs.writeFileSync(fileName,"");
-     return logs;
+      //File does not exist
+      fs.writeFileSync(fileName, "");
+      return logs;
     }
   }
-  catch(err)
-  {
+  catch (err) {
     console.log(JSON.stringify(err));
     return logs;
   }
