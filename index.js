@@ -8,7 +8,15 @@ const fetch = require('node-fetch');
 let clients = [];
 app.use(express.json());
 
-main.client.connect();
+try{
+  main.client.connect();
+  console.log("Connected to postgress")
+}
+catch(err)
+{
+  console.log(err);
+}
+
 
 const rootStr = `<!DOCTYPE html>
 <html lang="en">
@@ -202,7 +210,6 @@ setInterval(async function () {
   console.log("Sending Logs to reporting");
   // do your stuff here
   var result = await main.getLogs();
-  console.log(JSON.stringify(result));
   if(result.length == 0)
   {
     //Do nothing
@@ -222,7 +229,6 @@ setInterval(async function () {
       });
   
       reporting = await reportingRes.text();
-      console.log(reporting);
     }
     catch (err) {
       reporting = { "status": false };

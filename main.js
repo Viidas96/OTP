@@ -1,13 +1,13 @@
 const fs = require('fs');
 const { Client } = require('pg')
-//const client = new Client('postgres://daafgflhjhwmzt:1d7788d71fbe3cf20d1814dc9cb8159b57a5b7dff28cd5c01b0ad820c71e3932@ec2-184-73-210-189.compute-1.amazonaws.com:5432/de6ur42bgaj3ss');
+//const client = new Client('postgres://vuwsckhmimnhkz:b2c581b4dd389b25fb152db6b729c6ede9bf7ef79af433bec007f802f2708142@ec2-54-243-197-120.compute-1.amazonaws.com:5432/d75j4poro98pc0');
 const client = new Client({
-  host: 'ec2-184-73-210-189.compute-1.amazonaws.com',
+  host: 'ec2-54-243-197-120.compute-1.amazonaws.com',
   port: 5432,
-  user: 'daafgflhjhwmzt',
-  database:'de6ur42bgaj3ss',
+  user: 'vuwsckhmimnhkz',
+  database:'d75j4poro98pc0',
   ssl:true,
-  password: '1d7788d71fbe3cf20d1814dc9cb8159b57a5b7dff28cd5c01b0ad820c71e3932',
+  password: 'b2c581b4dd389b25fb152db6b729c6ede9bf7ef79af433bec007f802f2708142',
 })
 /**
  * It adds the parameters parameters to a flat file in JSON format.
@@ -109,8 +109,26 @@ function generateOtp()
 //This function gets all logs then removes them
  async function getLogs(){
   var results = [];
-  results = await client.query('SELECT * FROM public.logs ORDER BY timestamp desc',[]);
-  return results.rows;
+  try{
+  results = await client.query('SELECT * FROM public.logs ORDER BY timestamp ASC',[]);
+  if(results.rows.length != 0)
+  {
+    var myData = results.rows[results.rows.length - 1].timestamp;
+    const deleteQuery = await client.query('DELETE FROM public.logs WHERE timestamp <= $1',[myData]);
+    console.log("Removed records");
+    return results.rows;
+  }
+  else
+  {
+    return results.rows;
+  }
+  
+  }
+  catch(err)
+  {
+    console.log(err);
+    return results;
+  }
     
   //Need to read flatfile
   /*let fileName = 'flatfile.json';
