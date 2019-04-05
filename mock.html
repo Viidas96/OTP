@@ -5,7 +5,7 @@
     <script>
 
         
-        function createOTP(clientID)
+        /*function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
             var url = "http://localhost:5001/genotp";
@@ -37,9 +37,9 @@
             }
             var data = JSON.stringify({ "clientID": clientID, "otp": otp });
             xhr.send(data);
-        }
+        }*/
 
-        /*function createOTP(clientID)
+        function createOTP(clientID)
         {
             xhr = new XMLHttpRequest();
             var url = "https://otp-ocean.herokuapp.com/genotp";
@@ -73,7 +73,7 @@
             }
             var data = JSON.stringify({ "clientID": clientID, "otp": otp });
             xhr.send(data);
-        }*/
+        }
     </script>
     <title>
         Mock Test
