@@ -1,10 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const main = require('./main.js');
 var moment = require('moment');
 const app = express();
 const fetch = require('node-fetch');
-//const port = process.env.PORT || 8080;
+
 let clients = [];
 app.use(express.json());
 
@@ -110,8 +109,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.set('port', process.env.PORT || 5001);
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The URL endpoints that we wil use to make POST requests
 const notificationUrl = "https://fnbsim.southafricanorth.cloudapp.azure.com/otp";
@@ -133,12 +130,11 @@ app.post("/genotp", async (req, res) => {
     const notifiedRes = await fetch(notificationUrl, {
       method: 'POST',
       body: JSON.stringify({
-        clientID: req.body.clientID,
+        clientID: tclientID,
         otp: totp
       }),
       headers: { 'Content-Type': 'application/json' }
     });
-
     notified = await notifiedRes.text();
   }
   catch (err) {
@@ -155,12 +151,12 @@ app.post("/genotp", async (req, res) => {
   };
 
   if (notified == "Email sent successfully") {
-    notified = {"status": true };
+    notified = { "status": true };
   }
   else {
     notified = { "status": false };
   }
-  
+
   clients.push(client);
   //needs to be notified
   res.json(notified);
@@ -181,17 +177,16 @@ app.post("/validate", async (req, res) => {
     const clientIndex = clients.findIndex(client => client.clientID === clientID);
     if (testOTP == clientOTP.otp) {
       //60000 because it returns miliseconds not seconds
-      response = {status: main.validateTime(createdTime) };
+      response = { status: main.validateTime(createdTime) };
     }
     else {
-      response = {status: false};
+      response = { status: false };
     }
 
     //insert a log of this validation to the flatfile
     var value = main.insertFlatFile(clientID, clientOTP.otp, moment().unix(), response.status);
 
     //remove the object from the array
-    //delete clients[clientID];
     clients.splice(clientIndex, 1);
   }
   else {
@@ -215,8 +210,7 @@ setInterval(async function () {
     //Do nothing
     console.log("No data to send");
   }
-  else
-  {
+  else {
     result = JSON.stringify(result);
     try {
       const reportingRes = await fetch(reportingUrl, {
@@ -225,9 +219,9 @@ setInterval(async function () {
           system: "OTPS",
           data: result
         }),
-        headers: {'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json' }
       });
-  
+
       reporting = await reportingRes.text();
     }
     catch (err) {
@@ -240,11 +234,7 @@ setInterval(async function () {
 }, the_interval);
 
 //running the server
-//process.env.PORT
+
 app.listen(5001, () => {
   console.log(`API Running on heroku`);
 });
-//for local testing
-// app.listen(5001, () => {
-//   console.log(`API Running on port 5001`);
-// });
