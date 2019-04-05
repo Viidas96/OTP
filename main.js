@@ -1,4 +1,14 @@
 const fs = require('fs');
+const { Client } = require('pg')
+//const client = new Client('postgres://vuwsckhmimnhkz:b2c581b4dd389b25fb152db6b729c6ede9bf7ef79af433bec007f802f2708142@ec2-54-243-197-120.compute-1.amazonaws.com:5432/d75j4poro98pc0');
+const client = new Client({
+  host: 'ec2-54-243-197-120.compute-1.amazonaws.com',
+  port: 5432,
+  user: 'vuwsckhmimnhkz',
+  database:'d75j4poro98pc0',
+  ssl:true,
+  password: 'b2c581b4dd389b25fb152db6b729c6ede9bf7ef79af433bec007f802f2708142',
+})
 /**
  * It adds the parameters to a flat file in JSON format.
  * @param {String} clientID 
@@ -7,8 +17,22 @@ const fs = require('fs');
  * @param {Bool} success 
  */
 //Will happen sync
-function insertFlatFile(clientID, OTP, timestamp, success) {
-  let fileName = 'flatfile.json';
+
+  async function insertFlatFile(clientID, OTP, timestamp, success) {
+    timestamp = timestamp * 1000;
+    client.query('INSERT INTO public.logs(timestamp,"clientID","OTP",success) VALUES ($1,$2,$3,$4)',[timestamp,clientID,OTP,success])
+    .then(res => {
+      console.log("Inserted");
+      return true;
+    })
+    .catch(e => 
+      {
+        console.error("Failed to insert");
+        console.log(e);
+        return false;
+      });
+ /* let fileName = 'flatfile.json';
+
   timestamp = timestamp * 1000;
   // async work
   var jsonContent = [];
@@ -50,7 +74,7 @@ function insertFlatFile(clientID, OTP, timestamp, success) {
   }
   catch (e) {
     return false;
-  }
+  }*/
 }
 
 /**
@@ -85,9 +109,31 @@ function generateOtp()
  * This will get all the logs return it, and remove them after.
  */
 //Will happen sync
- function getLogs(){
+//This function gets all logs then removes them
+ async function getLogs(){
+  var results = [];
+  try{
+  results = await client.query('SELECT * FROM public.logs ORDER BY timestamp ASC',[]);
+  if(results.rows.length != 0)
+  {
+    var myData = results.rows[results.rows.length - 1].timestamp;
+    const deleteQuery = await client.query('DELETE FROM public.logs WHERE timestamp <= $1',[myData]);
+    console.log("Removed records");
+    return results.rows;
+  }
+  else
+  {
+    return results.rows;
+  }
+  
+  }
+  catch(err)
+  {
+    console.log(err);
+    return results;
+  }
   //Need to read flatfile
-  let fileName = 'flatfile.json';
+  /*let fileName = 'flatfile.json';
   var jsonContent = [];
   var logs = [];
   try {
@@ -119,12 +165,13 @@ function generateOtp()
   catch (err) {
     console.log(JSON.stringify(err));
     return logs;
-  }
+  }*/
 }
 
 module.exports = {
   generateOtp,
   insertFlatFile,
   getLogs,
-  validateTime
+  validateTime,
+  client
 };

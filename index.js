@@ -7,6 +7,16 @@ const fetch = require('node-fetch');
 let clients = [];
 app.use(express.json());
 
+try{
+  main.client.connect();
+  console.log("Connected to postgress")
+}
+catch(err)
+{
+  console.log(err);
+}
+
+
 const rootStr = `<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -194,8 +204,9 @@ setInterval(async function () {
   reportingUrl = "https://fnbreports-6455.nodechef.com/api";
   console.log("Sending Logs to reporting");
   // do your stuff here
-  var result = main.getLogs();
-  if (result.length == 0) {
+  var result = await main.getLogs();
+  if(result.length == 0)
+  {
     //Do nothing
     console.log("No data to send");
   }
@@ -212,7 +223,6 @@ setInterval(async function () {
       });
 
       reporting = await reportingRes.text();
-      console.log(reporting);
     }
     catch (err) {
       reporting = { "status": false };
@@ -224,6 +234,7 @@ setInterval(async function () {
 }, the_interval);
 
 //running the server
-app.listen(process.env.PORT || 5001, () => {
+
+app.listen(5001, () => {
   console.log(`API Running on heroku`);
 });
