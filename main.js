@@ -10,13 +10,14 @@ const client = new Client({
   password: 'b2c581b4dd389b25fb152db6b729c6ede9bf7ef79af433bec007f802f2708142',
 })
 /**
- * It adds the parameters parameters to a flat file in JSON format.
+ * It adds the parameters to a flat file in JSON format.
  * @param {String} clientID 
  * @param {String} OTP 
  * @param {String} timestamp 
  * @param {Bool} success 
  */
 //Will happen sync
+
   async function insertFlatFile(clientID, OTP, timestamp, success) {
     timestamp = timestamp * 1000;
     client.query('INSERT INTO public.logs(timestamp,"clientID","OTP",success) VALUES ($1,$2,$3,$4)',[timestamp,clientID,OTP,success])
@@ -31,30 +32,31 @@ const client = new Client({
         return false;
       });
  /* let fileName = 'flatfile.json';
-  timestamp = timestamp * 1000;
-    // async work
-    var jsonContent = [];
-    try{
-    if(fs.existsSync(fileName)){
-        var contents = fs.readFileSync(fileName);
-        if (contents.length == 0) {
-          //console.log("No data in file");
-        }
-        else {
-          jsonContent = JSON.parse(contents);
-        }
 
-        for (var i = 0; i < jsonContent.length; i++) {
-          var obj = jsonContent[i];
-        }
-        let insertLog = {
-          clientID: clientID,
-          OTP: OTP,
-          timestamp: timestamp,
-          success: success
-        };
-        jsonContent.push(insertLog);
-        fs.writeFileSync(fileName, JSON.stringify(jsonContent)); 
+  timestamp = timestamp * 1000;
+  // async work
+  var jsonContent = [];
+  try {
+    if (fs.existsSync(fileName)) {
+      var contents = fs.readFileSync(fileName);
+      if (contents.length == 0) {
+        //console.log("No data in file");
+      }
+      else {
+        jsonContent = JSON.parse(contents);
+      }
+
+      for (var i = 0; i < jsonContent.length; i++) {
+        var obj = jsonContent[i];
+      }
+      let insertLog = {
+        clientID: clientID,
+        OTP: OTP,
+        timestamp: timestamp,
+        success: success
+      };
+      jsonContent.push(insertLog);
+      fs.writeFileSync(fileName, JSON.stringify(jsonContent));
     }
     else {
       let insertLog = {
@@ -70,8 +72,7 @@ const client = new Client({
     }
     return true;
   }
-  catch(e)
-  {
+  catch (e) {
     return false;
   }*/
 }
@@ -82,29 +83,31 @@ const client = new Client({
  * @param {String} createdTime 
  * @param {String} checkTime 
  */
-function validateTime(createdTime, checkTime = new Date()){
+function validateTime(createdTime, checkTime = new Date()) {
   createdTime = new Date(createdTime);
-  
+
   return ((checkTime - createdTime) < 180000);
 }
 
-//generate otp pin, 5 digit long
+/**
+ * It generates a 5 digit OTP pin and returns it.
+ */
 function generateOtp() 
 {
-  
   var arr = [];
-  for(var i=0; i<5;i++)
-  {
-    arr.push(Math.floor(Math.random()*10)+0);
+  for (var i = 0; i < 5; i++) {
+    arr.push(Math.floor(Math.random() * 10) + 0);
   }
   var finalAns = "";
-  for(var i=0; i<5;i++)
-  {
+  for (var i = 0; i < 5; i++) {
     finalAns += arr[i];
   }
   return finalAns;
 }
 
+/**
+ * This will get all the logs return it, and remove them after.
+ */
 //Will happen sync
 //This function gets all logs then removes them
  async function getLogs(){
@@ -129,13 +132,12 @@ function generateOtp()
     console.log(err);
     return results;
   }
-    
   //Need to read flatfile
   /*let fileName = 'flatfile.json';
   var jsonContent = [];
   var logs = [];
-  try{
-  if(fs.existsSync(fileName)) {
+  try {
+    if (fs.existsSync(fileName)) {
       var contents = fs.readFileSync(fileName);
       if (contents.length == 0) {
       }
@@ -150,18 +152,17 @@ function generateOtp()
       }
 
       //Delete contents of file
-      fs.writeFileSync(fileName,"");
+      fs.writeFileSync(fileName, "");
 
       return logs;
-      
+
     } else {
-     //File does not exist
-     fs.writeFileSync(fileName,"");
-     return logs;
+      //File does not exist
+      fs.writeFileSync(fileName, "");
+      return logs;
     }
   }
-  catch(err)
-  {
+  catch (err) {
     console.log(JSON.stringify(err));
     return logs;
   }*/
