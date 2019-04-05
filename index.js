@@ -241,7 +241,7 @@ setInterval(async function () {
 
 //running the server
 //process.env.PORT
-app.listen(5001, () => {
+app.listen(process.env.PORT, () => {
   console.log(`API Running on heroku`);
 });
 //for local testing
